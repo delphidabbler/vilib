@@ -1,0 +1,46 @@
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+             DELPHIDABBLER VERSION INFORMATION MANIPULATOR LIBRARY
+                             SOURCE CODE LICENSING
+________________________________________________________________________________
+
+This document discusses and presents the relevant licenses governing the
+DelphiDabbler Version Information Manipulator Library (the "Library") source
+code available from http://www.delphidabbler.com/software?id=vibindata.
+
+The download includes:
+
++ Original Source Code written by Peter Johnson.
++ Some binary resource files that may be difficult to recompile from source.
++ Various documents, including licenses.
+
+In addition to the provided source code the Delphi 7 VCL is required to build
+the Library.
+
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Original Source Code
+________________________________________________________________________________
+
+Original source files are stored in "Src" and "Src\Exports" directories.
+
+Any original source code file that is governed by a license has a comment to
+that effect in the source.
+
+Any other source code files that contain no copyright or license information are
+public domain.
+
+Many files are licensed under the Mozilla Public License. A full copy of that
+license can be found in MPL.txt
+
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Binary Resource Files
+________________________________________________________________________________
+
+The requied binary resource file, "VVIBinData.res" is provided in the "Bin"
+directory. The governing license of this file is found in "VVIBinData.vi" in the
+"Src" directory.
+
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯

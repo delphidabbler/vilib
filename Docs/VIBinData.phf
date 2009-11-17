@@ -1,0 +1,174 @@
+@PROJECT_NAME           Binary Version Information Manipulator Library
+@PROJECT_DESC           Enables binary version information data to be read from
+                        and written to streams and to be updated.
+@ROOT                   ..\Src
+@AUTHOR                 Peter D Johnson, LLANARTH, Ceredigion, Wales, UK.
+@EMAIL                  delphidabbler@yahoo.co.uk
+@COPYRIGHT              © Peter D Johnson, 2002-2007
+@WEBSITE                http://www.delphidabbler.com/
+@HISTORY(
+  @REVISION(
+    @VERSION            1.0 (build 1)
+    @DATE               04/08/2002
+    @COMMENTS           Original version.
+    @COMPILERS          + Delphi 4.
+                        + Version Information Expert 2.8.2.
+                        + Borland Resource Compiler.
+    @FILES(
+      @NEW(
+        @FILE           VIBinData.dpr
+        @VERSION        1.0
+      )
+      @NEW(
+        @FILE           IntfBinaryVerInfo.pas
+        @VERSION        1.0
+      )
+      @NEW(
+        @FILE           UBinaryVerInfo.pas
+        @VERSION        1.0
+      )
+      @NEW(
+        @FILE           UVerInfoBinIO.pas
+        @VERSION        1.0
+      )
+      @NEW(
+        @FILE           UVerInfoData.pas
+        @VERSION        1.0
+      )
+      @NEW(
+        @FILE           UVerInfoRec.pas
+        @VERSION        1.0
+      )
+      @NEW(
+        @FILE           VVIBinData.vi
+        @DATE           04/08/2002
+        @COMMENTS       Original version.
+      )
+    )
+  )
+  @REVISION(
+    @VERSION            1.0.1 (build 2)
+    @DATE               31/05/2003
+    @COMMENTS           Modified input method to be able to read wide string
+                        values without using value length stored in version info
+                        since this can't be relied upon to be consistent.
+    @COMPILERS          + Delphi 4.
+                        + Version Information Expert 2.9.
+                        + Borland Resource Compiler.
+    @FILES(
+      @UPDATED(
+        @FILE           UVerInfoRec.pas
+        @VERSION        1.1
+      )
+      @UPDATED(
+        @FILE           VVIBinData.vi
+        @DATE           31/05/2003
+        @COMMENTS       Changed references to PJSoft to DelphiDabbler and
+                        updated file and product version numbers.
+      )
+    )
+  )
+  @REVISION(
+    @VERSION            1.0.2 (build 3)
+    @DATE               22/06/2003
+    @COMMENTS           Fixed bug causing access violation when attempt was made
+                        to add a string table. Also fixed so that root version
+                        info nodes are named correctly.
+    @COMPILERS          + Delphi 4.
+                        + Version Information Expert 2.9.
+                        + Borland Resource Compiler.
+    @FILES(
+      @UPDATED(
+        @FILE           UBinaryVerInfo.pas
+        @VERSION        1.1
+      )
+      @UPDATED(
+        @FILE           UVerInfoData.pas
+        @VERSION        1.1
+      )
+      @UPDATED(
+        @FILE           VVIBinData.vi
+        @DATE           22/06/2003
+        @COMMENTS       Updated file and product version numbers.
+      )
+    )
+  )
+  @REVISION(
+    @VERSION            1.0.3 (build 4)
+    @DATE               17/08/2003
+    @COMMENTS           Modified input method to deal with further badly formed
+                        value entries in version information. Some programs have
+                        erroneous entries value entries where the size of the
+                        value does not tally with the characters in the values.
+                        These values left the stream pointer incorrectly
+                        positioned when reading version information. The revised
+                        method now relies on other means to correctly position
+                        the stream pointer.
+    @COMPILERS          + Delphi 4.
+                        + Version Information Expert 2.9.
+                        + Borland Resource Compiler.
+    @FILES(
+      @UPDATED(
+        @FILE           UVerInfoRec.pas
+        @VERSION        1.2
+      )
+      @UPDATED(
+        @FILE           VVIBinData.vi
+        @DATE           17/08/2003
+        @COMMENTS       Updated file and product version numbers.
+      )
+    )
+  )
+  @REVISION(
+    @VERSION            1.0.4 (build 5)
+    @DATE               19/10/2004
+    @COMMENTS           Fixed minor bug in error resource string that was
+                        causing Format routine to fail.
+    @COMPILERS          + Delphi 7.
+                        + Version Information Editor 2.10.1.
+                        + Borland Resource Compiler v4.
+    @FILES(
+      @UPDATED(
+        @FILE           UBinaryVerInfo.pas
+        @VERSION        1.2
+      )
+      @UPDATED(
+        @FILE           VVIBinData.vi
+        @DATE           19/10/2004
+        @COMMENTS       Updated file and product version number.
+      )
+    )
+  )
+  @REVISION(
+    @VERSION            1.0.5
+    @COMMENTS           + Changed to new EULA and made changes to library's
+                          version information to reflect this.
+                        + Restructed source code tree and changed references
+                          accordingly.
+                        + Added batch file used to build the library.
+    @COMPILERS          + Delphi 7.
+                        + Version Information Editor 2.11.
+                        + Borland Resource Compiler v4.
+    @DATE               26/08/2007
+    @FILES(
+      @UPDATED(
+        @FILE           VIBinData.dpr
+        @VERSION        1.1
+      )
+      @UPDATED(
+        @FILE           VViBinData.vi
+        @DATE           26/08/2007
+        @COMMENTS       + Changed Comments string to describe conditions of
+                          distribution and how to obtain source code.
+                        + Added MPL and build instructions.
+                        + Removed path to BRCC32.
+                        + Updated file and product numbers.
+                        + Removed resource identifier.
+      )
+      @NEW(
+        @FILE           Build.bat
+        @VERSION        1.0
+      )
+    )
+  )
+)
