@@ -2,15 +2,11 @@
 @rem Script used to build the DelphiDabbler Binary Version Information Data
 @rem Library
 @rem
-@rem Copyright (C) Peter Johnson (www.delphidabbler.com), 2007
-@rem
-@rem v1.0 of 22 August 2007 - First version.
-@rem
 @rem Requires:
 @rem   Borland Delphi7
 @rem   Borland BRCC32 from Delphi 7 installation
 @rem   DelphiDabbler Version Information Editor v2.11 or later, available from
-@rem     www.delphidabbler.com 
+@rem     www.delphidabbler.com
 @rem
 @rem Also requires the following environment variables:
 @rem   DELPHI7 to be set to the install directory of Delphi 7

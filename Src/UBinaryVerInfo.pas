@@ -1,42 +1,15 @@
-{ ##
-  @FILE                     UBinaryVerInfo.pas
-  @COMMENTS                 Provides definition of class implementing of
-                            IVerInfoBinary and IVerInfoBinaryReader interfaces
-                            that are exported from DLL. Also exports function
-                            used to create objects supported by the DLL.
-  @PROJECT_NAME             Binary Version Information Manipulator Library
-  @PROJECT_DESC             Enables binary version information data to be read
-                            from and written to streams and to be updated.
-  @DEPENDENCIES             None.
-  @HISTORY(
-    @REVISION(
-      @VERSION              1.0
-      @DATE                 04/08/2002
-      @COMMENTS             Original version.
-    )
-    @REVISION(
-      @VERSION              1.1
-      @DATE                 22/06/2003
-      @COMMENTS             Fixed bug in TVerInfoBinary.AddStringTable where a
-                            spurious call to QueryInterface was prematurely
-                            freeing the object, causing access violation when
-                            an attempt was made to add a string table.
-    )
-    @REVISION(
-      @VERSION              1.2
-      @DATE                 19/10/2004
-      @COMMENTS             Fixed error in error message resource string that
-                            was causing exception in Format procedure.
-    )
-  )
+{
+  Provides definition of class implementing of IVerInfoBinary and
+  IVerInfoBinaryReader interfaces that are exported from DLL. Also exports
+  function used to create objects supported by the DLL.
 }
 
 
 {
  * ***** BEGIN LICENSE BLOCK *****
- * 
+ *
  * Version: MPL 1.1
- * 
+ *
  * The contents of this file are subject to the Mozilla Public License Version
  * 1.1 (the "License"); you may not use this file except in compliance with the
  * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
@@ -44,17 +17,17 @@
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is UBinaryVerInfo.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
- * 
+ *
  * Portions created by the Initial Developer are Copyright (C) 2002-2004 Peter
  * Johnson. All Rights Reserved.
- * 
+ *
  * Contributor(s):
- * 
+ *
  * ***** END LICENSE BLOCK *****
 }
 

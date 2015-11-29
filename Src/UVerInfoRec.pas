@@ -1,71 +1,34 @@
-{ ##
-  @FILE                     UVerInfoRec.pas
-  @COMMENTS                 Defines classes that encapsulate general version
-                            information records and exposes properties for the
-                            key record elements. It can also read and write its
-                            data from and to a stream. There are classes for
-                            both 16 and 32 bit version information records.
-  @PROJECT_NAME             Binary Version Information Manipulator Library.
-  @PROJECT_DESC             Enables binary version information data to be read
-                            from and written to streams and to be updated.
-  @DEPENDENCIES             None.
-  @HISTORY(
-    @REVISION(
-      @VERSION              1.0
-      @DATE                 04/08/2002
-      @COMMENTS             Original version.
-    )
-    @REVISION(
-      @VERSION              1.1
-      @DATE                 31/05/2003
-      @COMMENTS             + Modified input method to be able to read wide
-                              string values without using value length from
-                              version info since this can't be relied upon to be
-                              consistent.
-                            + Set DataType to 0 in ANSI ReadHeader method (this
-                              was missing).
-    )
-    @REVISION(
-      @VERSION              1.2
-      @DATE                 17/08/2003
-      @COMMENTS             Modified input method to correct stream position to
-                            deal with version info that has incorrect structure
-                            and invalid wValueLength value. The main changes
-                            were:
-                            + to explicitly set stream position to start of
-                              child records rather than assume correct number
-                              of value bytes are read.
-                            + to explicitly set stream position to end of record
-                              (per wLength value in header rather than relying
-                              on correct number of bytes to be read.
-    )
-  )
+{
+  Defines classes that encapsulate general version information records and
+  exposes properties for the key record elements. It can also read and write its
+  data from and to a stream. There are classes for both 16 and 32 bit version
+  information records.
 }
 
 
 {
  * ***** BEGIN LICENSE BLOCK *****
- * 
+ *
  * Version: MPL 1.1
- * 
+ *
  * The contents of this file are subject to the Mozilla Public License Version
  * 1.1 (the "License"); you may not use this file except in compliance with the
  * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
- * 
+ *
  * Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
- * 
+ *
  * The Original Code is UVerInfoRec.pas
- * 
+ *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
- * 
+ *
  * Portions created by the Initial Developer are Copyright (C) 2002-2003 Peter
  * Johnson. All Rights Reserved.
- * 
+ *
  * Contributor(s):
- * 
+ *
  * ***** END LICENSE BLOCK *****
 }
 

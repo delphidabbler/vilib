@@ -1,27 +1,5 @@
-{ ##
-  @FILE                     VIBinData.dpr
-  @COMMENTS                 Main project file.
-  @PROJECT_NAME             Binary Version Information Manipulator Library
-  @PROJECT_DESC             Enables binary version information data to be read
-                            from and written to streams and to be updated.
-  @AUTHOR                   Peter D Johnson, LLANARTH, Ceredigion, Wales, UK.
-  @EMAIL                    delphidabbler@yahoo.co.uk
-  @COPYRIGHT                © Peter D Johnson, 2002-2007.
-  @WEBSITE                  http://www.delphidabbler.com/
-  @HISTORY(
-    @REVISION(
-      @VERSION              1.0
-      @DATE                 02/08/2002
-      @COMMENTS             Original version.
-    )
-    @REVISION(
-      @VERSION              1.1
-      @DATE                 23/08/2007
-      @COMMENTS             Changed path to IntfBinaryVerInfo.pas. Now located
-                            in Exports sub folder - this file is required by
-                            any application that uses VIBinData.dll.
-    )
-  )
+{
+  Main project file.
 }
 
 

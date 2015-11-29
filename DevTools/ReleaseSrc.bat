@@ -3,8 +3,6 @@
 @rem Information Manipulator Library.
 @rem
 @rem Copyright (C) Peter Johnson (www.delphidabbler.com), 2007
-@rem
-@rem v1.0 of 26 Aug 2007 - First version.
 @rem ---------------------------------------------------------------------------
 
 @echo off
