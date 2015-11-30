@@ -1,0 +1,5 @@
+Build/
+__history/
+*.local
+*.identcache
+*.todo
