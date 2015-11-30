@@ -19,13 +19,13 @@
 			<DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
 			<DCC_ImageBase>00400000</DCC_ImageBase>
 			<DCC_UnitAlias>WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;$(DCC_UnitAlias)</DCC_UnitAlias>
-			<DCC_ExeOutput>..\Exe</DCC_ExeOutput>
-			<DCC_UnitSearchPath>..\Bin;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+			<DCC_ExeOutput>..\Build\Exe</DCC_ExeOutput>
+			<DCC_UnitSearchPath>..\Build\Bin;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
 			<DCC_N>true</DCC_N>
 			<DCC_S>false</DCC_S>
 			<GenDll>true</GenDll>
 			<DCC_K>false</DCC_K>
-			<DCC_DcuOutput>..\Bin</DCC_DcuOutput>
+			<DCC_DcuOutput>..\Build\Bin</DCC_DcuOutput>
 			<DCC_E>false</DCC_E>
 			<DCC_F>false</DCC_F>
 		</PropertyGroup>
