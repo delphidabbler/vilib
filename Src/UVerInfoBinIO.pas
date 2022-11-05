@@ -103,7 +103,7 @@ function TVerInfoBinIO.GetPosition: LongInt;
   {Returns the current position in the stream. Raises exception if position can't
   be read}
 var
-  CurPos: Int64;  // position in stream
+  CurPos: UInt64;  // position in stream
 begin
   // Attempt to get position in stream
   if not Succeeded(fStream.Seek(0, STREAM_SEEK_CUR, CurPos)) then
@@ -145,13 +145,13 @@ function TVerInfoBinIO.Seek(Move, Origin: Integer): LongInt;
   exception if the stream doesn't support the seek operation. The origin is
   specified in same way as when calling IStream.Seek. Returns the new position}
 var
-  NewPos: Int64;  // new position in stream
+  NewPos: UInt64;  // new position in stream
 begin
   // Attempt to seek to required position
   if not Succeeded(fStream.Seek(Move, Origin, NewPos)) then
     raise EStreamError.Create(sCantSeek);
   // Return new position converted to 32 bits
-  Result := NewPos;
+  Result := LongInt(NewPos);
 end;
 
 procedure TVerInfoBinIO.WriteBuffer(const Buffer; Count: Integer);
