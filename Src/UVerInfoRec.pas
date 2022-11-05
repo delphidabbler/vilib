@@ -658,7 +658,7 @@ begin
     Reader.ReadBuffer(KeyChar, SizeOf(AnsiChar));
     Inc(Result, SizeOf(AnsiChar));
     if KeyChar <> #0 then
-      KeyName := KeyName + KeyChar;
+      KeyName := KeyName + WideChar(KeyChar);
   until KeyChar = #0;
   // Skip any padding to DWORD boundary
   Result := Result + ReadPadding(Reader, Result);
@@ -700,8 +700,8 @@ begin
   Result := 2 * SizeOf(Word);
   // write key as zero term ansi string (assumes ansi char has length 1)
   Assert(SizeOf(AnsiChar) = 1);
-  Key := Name;
-  Writer.WriteBuffer(PChar(Key)^, Length(Key) + 1);
+  Key := AnsiString(Name);
+  Writer.WriteBuffer(PAnsiChar(Key)^, Length(Key) + 1);
   Inc(Result, Length(Key) + 1);
   // pad key out to DWORD boundary
   Result := Result + WritePadding(Writer, Result);
