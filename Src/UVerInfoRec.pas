@@ -145,6 +145,10 @@ type
       passed back in RecSizePos (the actual value is written later once size
       of record is known). Returns number of bytes written. Descendants must
       implement since header format varies between 16 and 32 bit}
+    function ValuePtrToStr(const ValuePtr: Pointer): string; virtual; abstract;
+      {Converts the text value pointed to by ValuePtr to string. ValuePtr will
+      point to an ANSI string for 16 bit format and WideString for 32 bit
+      format, so descendants must implement}
   public
     constructor Create; overload;
       {Class constructor: create version info record with no parent (i.e. top
@@ -208,6 +212,9 @@ type
       version info structure. The position where the record size is written is
       passed back in RecSizePos (the actual value is written later once size
       of record is known). Returns number of bytes written}
+    function ValuePtrToStr(const ValuePtr: Pointer): string; override;
+      {Converts the text value pointed to by ValuePtr to string. ValuePtr points
+      to an ANSI string}
   public
     procedure SetStringValue(const Str: string); override;
       {Sets value buffer to given string - also sets data type to 0}
@@ -236,6 +243,9 @@ type
       version info structure. The position where the record size is written is
       passed back in RecSizePos (the actual value is written later once size
       of record is known). Returns number of bytes written}
+    function ValuePtrToStr(const ValuePtr: Pointer): string; override;
+      {Converts the text value pointed to by ValuePtr to string. ValuePtr points
+      to a wide string}
   public
     procedure SetStringValue(const Str: string); override;
       {Sets value buffer to given string - also sets data type to 1}
@@ -361,13 +371,7 @@ begin
   // Get pointer to value buffer (has value nil if there is no value buffer)
   ValuePtr := GetValue;
   if Assigned(ValuePtr) then
-  begin
-    // Value buffer exists: read either a string or wide string per data type
-    if fDataType = 0 then
-      Result := PChar(ValuePtr)
-    else
-      Result := WideCharToString(PWideChar(ValuePtr));
-  end
+    Result := ValuePtrToStr(ValuePtr)
   else
     // No value buffer: return empty string
     Result := '';
@@ -410,7 +414,7 @@ function TVerInfoRec.ReadObject(const Reader: TVerInfoBinIO): Integer;
   {Reads the version information record object using the given reader and
   returns the number of bytes read}
 var
-  wLength, wValueLength: WORD;  // length of strucure and Value member
+  wLength, wValueLength: WORD;  // length of structure and Value member
   Child: TVerInfoRec;           // reference to child record objects
   WC: WideChar;                 // wide character read from value string
   WValue: WideString;           // wide string to hold wide string value
@@ -670,12 +674,21 @@ var
   BufLen: Integer;  // required value buffer size
 begin
   // Allocate value buffer of required size
-  BufLen := SizeOf(AnsiChar) * (Length(Str) + 1);
+  var StrA: AnsiString := AnsiString(Str);
+  BufLen := SizeOf(AnsiChar) * (Length(StrA) + 1);
   AllocateValueBuffer(BufLen);
-  // Store given string as a wide string in buffer
-  Move(PChar(Str)^, fValueBuffer^, BufLen);
+  // Store given string as an ANSI string in buffer
+  Move(PAnsiChar(StrA)^, fValueBuffer^, BufLen);
   // Data type is always 0
   SetDataType(0);
+end;
+
+function TVerInfoRecA.ValuePtrToStr(const ValuePtr: Pointer): string;
+  {Converts the text value pointed to by ValuePtr to string. ValuePtr points to
+  an ANSI string}
+begin
+  var Value: AnsiString := PAnsiChar(ValuePtr);
+  Result := UnicodeString(Value);
 end;
 
 function TVerInfoRecA.WriteHeader(const Writer: TVerInfoBinIO;
@@ -698,7 +711,7 @@ begin
   Writer.WriteBuffer(ValueSize, SizeOf(Word));
   // Record number of bytes written
   Result := 2 * SizeOf(Word);
-  // write key as zero term ansi string (assumes ansi char has length 1)
+  // write key as zero termitaed ANSI string
   Assert(SizeOf(AnsiChar) = 1);
   Key := AnsiString(Name);
   Writer.WriteBuffer(PAnsiChar(Key)^, Length(Key) + 1);
@@ -733,7 +746,7 @@ begin
     Reader.ReadBuffer(KeyChar, SizeOf(WChar));
     Inc(Result, SizeOf(KeyChar));
     if KeyChar <> #0 then
-      KeyName := KeyName + WideCharLenToString(@KeyChar, 1);
+      KeyName := KeyName + KeyChar;
   until KeyChar = #0;
   // Skip any padding to DWORD boundary
   Result := Result + ReadPadding(Reader, Result);
@@ -748,9 +761,17 @@ begin
   BufLen := SizeOf(WideChar) * (Length(Str) + 1);
   AllocateValueBuffer(BufLen);
   // Store given string as a wide string in buffer
-  StringToWideChar(Str, PWideChar(fValueBuffer), Length(Str) + 1);
+  Move(PWideChar(Str)^, fValueBuffer^, BufLen);
   // Data type is 1
   SetDataType(1);
+end;
+
+function TVerInfoRecW.ValuePtrToStr(const ValuePtr: Pointer): string;
+  {Converts the text value pointed to by ValuePtr to string. ValuePtr points to a
+  wide string}
+begin
+  var Value: UnicodeString := PWideChar(ValuePtr);
+  Result := Value;
 end;
 
 function TVerInfoRecW.WriteHeader(const Writer: TVerInfoBinIO;
@@ -787,7 +808,7 @@ begin
   UnicodeBufSize := SizeOf(WideChar) * (Length(Key) + 1);
   GetMem(UnicodeBuf, UnicodeBufSize);
   try
-    StringToWideChar(Key, UnicodeBuf, (Length(Key) + 1));
+    Move(PWideChar(Key)^, UnicodeBuf^, UnicodeBufSize);
     Writer.WriteBuffer(UnicodeBuf^, UnicodeBufSize);
     Inc(Result, UnicodeBufSize);
   finally
@@ -798,3 +819,4 @@ begin
 end;
 
 end.
+
