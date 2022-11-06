@@ -71,7 +71,7 @@ type
         wLength       // length of structure inc children (Word)
         wValueLength  // size of TVSFixedFileInfo record (Word)
         wType         // 0 - binary (Word: 32 bit records only)
-        szKey         // 'VS_VERSION_INFO' (WideString: 32 bit, String: 16 bit)
+        szKey         // 'VS_VERSION_INFO' (WideStr: 32 bit, AnsiStr: 16 bit)
         pad1          // padding to DWORD boundary
         value         // fixed file information (TVSFixedFileInfo)
         pad2          // padding to DWORD boundary
@@ -82,7 +82,7 @@ type
         wLength       // length of structure inc children (Word)
         wValueLength  // 0 - there is no value (Word)
         wType         // 0 - binary (Word: 32 bit records only)
-        szKey         // 'VarFileInfo' (WideString: 32 bit, String: 16 bit)
+        szKey         // 'VarFileInfo' (WideStr: 32 bit, AnsiStr: 16 bit)
         pad1          // padding to DWORD boundary
         children      // array of Var records (usually just one)
       end;
@@ -91,7 +91,7 @@ type
         wLength       // length of structure inc children (Word)
         wValueLength  // length of list of translation ids (Word)
         wType         // 0 - binary (Word: 32 bit records only)
-        szKey         // 'Translation' (WideString: 32 bit, String: 16 bit)
+        szKey         // 'Translation' (WideStr: 32 bit, AnsiStr: 16 bit)
         pad1          // padding to DWORD boundary
         value         // list of translation ids (array of DWORD)
       end;
@@ -100,7 +100,7 @@ type
         wLength       // length of structure inc children (Word)
         wValueLength  // 0 - no value (Word)
         wType         // 0 - binary (Word: 32 bit records only)
-        szKey         // 'StringFileInfo' (WideString: 32 bit, String: 16 bit)
+        szKey         // 'StringFileInfo' (WideStr: 32 bit, AnsiStr: 16 bit)
         pad1          // padding to DWORD boundary
         children      // array of StringTable records
       end;
@@ -109,7 +109,7 @@ type
         wLength       // length of structure inc children (Word)
         wValueLength  // 0 - no value (Word)
         wType         // 0 - binary (Word: 32 bit records only)
-        szKey         // translation code (WideString: 32 bit, String: 16 bit)
+        szKey         // translation code (WideStr: 32 bit, AnsiStr: 16 bit)
         pad1          // padding to DWORD boundary
         children      // array of string records
       end;
@@ -118,7 +118,7 @@ type
         wLength       // length of structure inc children (Word)
         wValueLength  // length of string value (Word)
         wType         // 1 - text (Word: 32 bit records only)
-        szKey         // name of string (WideString: 32 bit, String: 16 bit)
+        szKey         // name of string (WideStr: 32 bit, AnsiStr: 16 bit)
         pad1          // padding to DWORD boundary
         value         // string's value
       end;
@@ -1004,3 +1004,4 @@ begin
 end;
 
 end.
+
