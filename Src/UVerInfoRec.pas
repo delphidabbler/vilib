@@ -470,6 +470,7 @@ begin
         //   length of string * SizeOf(WideChar) and some even pad with rubbish
         //   characters following end of string #0#0 to the (wrong) size of the
         //   value (e.g. Wise installer files)!!
+        //
         // So we create a wide string of sufficient size to hold value and read
         //   each wide character into it until terminating #0#0 is read. We then
         //   store this string in value buffer. This method (rather than direct
@@ -477,10 +478,19 @@ begin
         //   thereby ensuring that correct value length is written when data is
         //   output, regardless of wValueLength.
         //
-        // create wide string of sufficent size (may be either correct size or
+        // WARNING: Because of this workaround, we can't detect any Children
+        //   following a WideString value. Since we can't rely on wValueLength
+        //   being set correctly, we can't use it to find the offset of a
+        //   Children node. Luckily, the only time wide string values occur is
+        //   in String type nodes and String nodes never have a Children node.
+        //   Unfortunately, although this class is supposed to be general and
+        //   should work without knowledge of the type of the node, we do need
+        //   to assume that any node with wide string will not have children.
+
+        // Create wide string of sufficent size (may be either correct size or
         //   twice size required depending on meaning of wValueLength)
         SetLength(WValue, wValueLength);
-        // read in wide string up to and including terminating #0#0
+        // Read in wide string up to and including terminating #0#0
         // .. initialise index into wide string
         WVIdx := 1;
         repeat
@@ -767,8 +777,8 @@ begin
 end;
 
 function TVerInfoRecW.ValuePtrToStr(const ValuePtr: Pointer): string;
-  {Converts the text value pointed to by ValuePtr to string. ValuePtr points to a
-  wide string}
+  {Converts the text value pointed to by ValuePtr to string. ValuePtr points to
+  a wide string}
 begin
   var Value: UnicodeString := PWideChar(ValuePtr);
   Result := Value;
