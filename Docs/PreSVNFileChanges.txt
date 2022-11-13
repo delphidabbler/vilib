@@ -1,22 +1,31 @@
 ================================================================================
 
-Version Information Manipulator Library (vilib) Pre-SVN File Changes
+Version Information Manipulator Library (vilib)
 
-$Rev$
-$Date$
+Historical update information from v1.0.0 to v1.0.5.
 
 ================================================================================
 
-This file list changes to all known files for which information is available,
-from vilib v1.0.0 of 4 Aug 2002 to v1.0.5 of 26 Aug 2007.
+This file records known changes to files and releases of vilib from the first
+release of the project (v1.0.0) until it was placed under version control with
+Subversion on 17 November 2009.
 
-vilib was taken under version control with Subversion on 7 Nov 2009 unchanged
-from v1.0.5 as part of the vitools project. vilib was later extracted from the
-vitools project, unchanged, and imported, still unchanged, to Git.
+There are two sections in this document:
 
-For a description of which files formed which releases see
-PreSVNProjectChanges.txt. For a summary of the changes across different versions
-of the project see ChangeLog.txt.
+  1 Files: Lists all source code and development tools and provides details of
+    changes to these files that preceded version control.
+
+  2 Releases: Lists all the releases of vilib and notes which file revisions
+    were included in each release. For a summary of the changes across different
+    versions of the project see CHANGELOG.md.
+
+
+================================================================================
+FILES
+================================================================================
+
+This section lists all files for which update history is known for vilib between
+v1.0.0 to v1.0.5.
 
 --------------------------------------------------------------------------------
 DevTools/BuildAll.bat
@@ -139,4 +148,62 @@ v1.0 of 04 Aug 2002  - Original version located in Src directory. Moved to
                        version number.
         17 Nov 2009  - MOVED TO SVN.
 
+--------------------------------------------------------------------------------
+
+
+================================================================================
+RELEASES
+================================================================================
+
+This section lists all releases of vilib from v1.0.0 to v1.0.5. For each release
+the following information is noted:
+
+  + Version and build number.
+  + List of new, modified and deleted source files.
+
+The Development tools, Delphi-maintained files, test files and documentation are
+not included in this information.
+
+--------------------------------------------------------------------------------
+v1.0.0 of 04 Aug 2002
+--------------------------------------------------------------------------------
+New     : VIBinData.dpr v1.0
+New     : IntfBinaryVerInfo.pas v1.0
+New     : UBinaryVerInfo.pas v1.0
+New     : UVerInfoBinIO.pas v1.0
+New     : UVerInfoData.pas v1.0
+New     : UVerInfoRec.pas v1.0
+New     : VVIBinData.vi v1.0
+
+--------------------------------------------------------------------------------
+v1.0.1 of 31 May 2003
+--------------------------------------------------------------------------------
+Updated : UVerInfoRec.pas v1.1
+Updated : VVIBinData.vi v1.1
+
+--------------------------------------------------------------------------------
+v1.0.2 of 22 Jun 2003
+--------------------------------------------------------------------------------
+Updated : UBinaryVerInfo.pas v1.1
+Updated : UVerInfoData.pas v1.1
+Updated : VVIBinData.vi v1.2
+
+--------------------------------------------------------------------------------
+v1.0.3 of 17 Aug 2003
+--------------------------------------------------------------------------------
+Updated : UVerInfoRec.pas v1.2
+Updated : VVIBinData.vi v1.3
+
+--------------------------------------------------------------------------------
+v1.0.4 of 19 Oct 2004
+--------------------------------------------------------------------------------
+Updated : UBinaryVerInfo.pas v1.2
+Updated : VVIBinData.vi v1.4
+
+--------------------------------------------------------------------------------
+v1.0.5 of 26 Aug 2007
+--------------------------------------------------------------------------------
+Moved   : IntfBinaryVerInfo.pas v1.0 (Src directory => Src/Exports)
+Updated : VIBinData.dpr v1.1
+Updated : VViBinData.vi v1.5
 --------------------------------------------------------------------------------
