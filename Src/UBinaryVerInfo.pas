@@ -60,18 +60,6 @@ type
   TVerInfoBinary = class;
 
   {
-  IVerInfoBinaryPvt:
-    Interface used to allow access to reference to implementing object instance.
-
-    Inheritance: IVerInfoBinaryPvt -> [IUnknown]
-  }
-  IVerInfoBinaryPvt = interface(IUnknown)
-    ['{B92AB0E8-E7B5-4C54-AFA8-B049BB14EF4A}']
-    function GetSelf: TVerInfoBinary;
-      {Returns object's Self pointer}
-  end;
-
-  {
   TVerInfoBinary:
     Class that implements the IVerInfoBinary and IVerInfoBinaryReader interface
     exported from the DLL.
@@ -79,7 +67,7 @@ type
     Inheritance: TVerInfoBinary -> [TInterfacedObject] -> [TObject]
   }
   TVerInfoBinary = class(TInterfacedObject,
-    IUnknown, IVerInfoBinaryReader, IVerInfoBinary, IVerInfoBinaryPvt)
+    IUnknown, IVerInfoBinaryReader, IVerInfoBinary)
   private
     fVIData: TVerInfoData;
       {Version information data object used to access and manipulate the binary
@@ -239,9 +227,6 @@ type
     function LastErrorMsg: WideString; stdcall;
       {Returns error message generated from last operation, or '' if last
       operation was a success}
-    { IVerInfoBinaryPvt }
-    function GetSelf: TVerInfoBinary;
-      {Returns object's Self pointer}
   public
     constructor Create(VerResType: TVerResType);
       {Class constructor: creates a new version information data object that
@@ -387,7 +372,7 @@ function TVerInfoBinary.Assign(const Source: IVerInfoBinaryReader): HResult;
 begin
   try
     // Assign using source's object reference
-    fVIData.Assign((Source as IVerInfoBinaryPvt).GetSelf.fVIData);
+    fVIData.Assign((Source as TVerInfoBinary).fVIData);
     Result := Success;
   except
     on E: Exception do
@@ -539,12 +524,6 @@ begin
   Result := GetFixedFileInfoArray(FFIArray);
   // Return the element at the required offset
   Value := FFIArray[Offset];
-end;
-
-function TVerInfoBinary.GetSelf: TVerInfoBinary;
-  {Returns object's Self pointer}
-begin
-  Result := Self;
 end;
 
 function TVerInfoBinary.GetStringCount(const TableIdx: Integer;
