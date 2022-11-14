@@ -1,4 +1,4 @@
-# DelphiDabller Version Information Manipulator Library End Use License Agreement
+# DelphiDabbler Version Information Manipulator Library End Use License Agreement
 
 The DelphiDabbler Version Information Manipulator Library (the "Library"), is an open source library. The Library is copyright (C) 2002-2022, [Peter D Johnson](https://gravatar.com/delphidabbler). All rights reserved.
 
@@ -6,7 +6,11 @@ The DelphiDabbler Version Information Manipulator Library (the "Library"), is an
 
 The source code of portions of this Library is available from the [delphidabbler/vilib](https://github.com/delphidabbler/vilib) project on GitHub, under the terms of the [Mozilla Public License](https://www.mozilla.org/MPL/).
 
+The demo code is released under the [MIT License](https://delphidabbler.mit-license.org/2022-), with the exception of `Demos/VIReaderDemo/UVerInfoFileStream.pas` and `Demos/ResRWDemo/Vendor/PJResFile.pas` which are licensed under the [Mozilla Public License v2](https://www.mozilla.org/en-US/MPL/2.0/).
+
 ## Executable (binary) code
+
+### The Library
 
 Permission is granted to anyone to use the executable (binary) version of the Library, including modified versions, providing the source code of any modified version of the Library is made available under the terms of the Mozilla Public License.
 
@@ -35,6 +39,10 @@ You may distribute the executable version, in original or modified form, with yo
 
    If a modified version of the Library is being distributed then `CHANGELOG.md` should be updated to record the changes and ReadMe.txt may be modified as necessary.
 
+### Demo Code
+
+The demo programs are released under the [MIT License](https://delphidabbler.mit-license.org/2022-).
+
 ### Disclaimer
 
-THIS LIBRARY IS PROVIDED "AS-IS", WITHOUT ANY EXPRESS OR IMPLIED WARRANTY. IN NO EVENT SHALL THE AUTHOR BE HELD LIABLE FOR ANY DAMAGES ARISING FROM THE USE OF THIS LIBRARY.
+THIS LIBRARY AND THE ASSOCIATED DEMO PROGRAMS ARE PROVIDED "AS-IS", WITHOUT ANY EXPRESS OR IMPLIED WARRANTY. IN NO EVENT SHALL THE AUTHOR BE HELD LIABLE FOR ANY DAMAGES ARISING FROM THE USE OF THIS LIBRARY.
