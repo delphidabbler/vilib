@@ -59,6 +59,7 @@ type
     btnDeleteStrTable: TButton;
     btnAddOrUpdateString: TButton;
     btnDeleteString: TButton;
+    btnSetFFI: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnViewClick(Sender: TObject);
@@ -75,6 +76,7 @@ type
     procedure btnDeleteStrTableClick(Sender: TObject);
     procedure btnAddOrUpdateStringClick(Sender: TObject);
     procedure btnDeleteStringClick(Sender: TObject);
+    procedure btnSetFFIClick(Sender: TObject);
   strict private
     const
       ResFileName = 'TestVI.res';
@@ -203,6 +205,29 @@ end;
 procedure TResRWDemoForm.btnSaveClick(Sender: TObject);
 begin
   WriteVIToResourceFile;
+end;
+
+procedure TResRWDemoForm.btnSetFFIClick(Sender: TObject);
+begin
+  // Set Fixed File Information to some arbitrary values
+  // We're not allowing user to enter these values, just because there would
+  // be many too any buttons!!
+  var FFI: TVSFixedFileInfo;
+  FFI.dwSignature := 0;     // will be overwritten with fixed signature
+  FFI.dwStrucVersion := 0;  // will be overwritten with value meaning v1.0
+  FFI.dwFileVersionMS := $00020004;
+  FFI.dwFileVersionLS := $00060A76;     // file version 2.4.6.2678
+  FFI.dwProductVersionMS := $07E60006;
+  FFI.dwProductVersionLS := $00000000;  // product version 2022.6.0.0
+  FFI.dwFileFlagsMask := VS_FF_PRIVATEBUILD or VS_FF_SPECIALBUILD;
+  FFI.dwFileFlags := VS_FF_SPECIALBUILD;
+  FFI.dwFileOS := VOS__WINDOWS32;
+  FFI.dwFileType := VFT_APP;
+  FFI.dwFileSubtype := 0;     // sub-type N/a for file type VFT_APP
+  FFI.dwFileDateMS := 0;
+  FFI.dwFileDateLS := 0;      // no date
+  // Set the FFI
+  Check(fVI.SetFixedFileInfo(FFI));
 end;
 
 procedure TResRWDemoForm.btnViewClick(Sender: TObject);

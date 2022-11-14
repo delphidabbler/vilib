@@ -300,4 +300,13 @@ object ResRWDemoForm: TResRWDemoForm
     TabOrder = 19
     OnClick = btnDeleteStringClick
   end
+  object btnSetFFI: TButton
+    Left = 8
+    Top = 91
+    Width = 129
+    Height = 25
+    Caption = 'Set FFI'
+    TabOrder = 20
+    OnClick = btnSetFFIClick
+  end
 end
