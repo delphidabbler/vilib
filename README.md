@@ -24,7 +24,7 @@ There are also two demos programs in the `Demos` directory. See `Demos/README.md
 
 The library in copyright (C) 2002-2022 Peter D Johnson, <https://delphidabbler.com>. See the file `LICENSE.md` for details of the license. Do not use `VIBinData.dll` if you do not agree with the license.
 
-Portions of the library's source code are released under the [Mozilla Public License v1.1](https://www.mozilla.org/en-US/MPL/1.1/).
+Portions of the library's source code are released under the [Mozilla Public License v2.0](https://www.mozilla.org/en-US/MPL/2.0/).
 
 ## Redistributing the Library
 
