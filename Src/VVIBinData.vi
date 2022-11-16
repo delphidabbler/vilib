@@ -24,7 +24,7 @@ Language=2057
 Character Set=1252
 
 [String File Info]
-Comments=This is an open source library. It may be distributed under the terms of an end user license agreement available from http://www.delphidabbler.com/. The source code of portions of the library is available from http://www.delphidabbler.com/ under the Mozilla Public License (http://www.mozilla.org/MPL/). Modified versions of the library must be plainly marked as such and must retain all copyright statements.
+Comments=This is an open source library. It may be distributed under the terms of an end user license agreement available from http://www.delphidabbler.com/. The source code of portions of the library is available from http://www.delphidabbler.com/ under the Mozilla Public License v2.0 (https://www.mozilla.org/en-US/MPL/2.0/). Modified versions of the library must be plainly marked as such and must retain all copyright statements.
 Company Name=DelphiDabbler
 File Description=DLL that enables binary version information data to be read from and written to streams and to be updated.
 File Version=<#F1>.<#F2>.<#F3> build <#F4>
