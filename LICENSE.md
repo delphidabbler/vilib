@@ -34,11 +34,11 @@ You may distribute the executable version, in original or modified form, with yo
 
 5. Should the Library, or a modified version of it be redistributed on its own rather than as part of a larger work, then the following files must be included in the distribution:
 
-   * this license file (License.txt)
-   * the ReadMe file (ReadMe.txt)
-   * the change log (ChangeLog.txt)
+   * this license file (LICENSE.md)
+   * the ReadMe file (README.md)
+   * the change log (CHANGELOG.md)
 
-   If a modified version of the Library is being distributed then `CHANGELOG.md` should be updated to record the changes and ReadMe.txt may be modified as necessary.
+   If a modified version of the Library is being distributed then `CHANGELOG.md` should be updated to record the changes and `README.md` may be modified as necessary.
 
 ### Disclaimer
 

@@ -16,7 +16,7 @@ To use the library simply copy the file `VIBinData.dll` to a  suitable directory
 
 ## Documentation & Demos
 
-For details of how to use the library, along with some example code please refer to the user guide (`UserGuide.pdf`) included with this distribution.
+For details of how to use the library, along with some example code please refer to the user guide (`UserGuide.md`) included with this distribution.
 
 There are also two demos programs in the `Demos` directory. See `Demos/README.md`.
 
