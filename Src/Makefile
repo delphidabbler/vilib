@@ -126,7 +126,7 @@ release:
   @echo Creating Release File $(RELEASEFILENAME)
   -@if exist $(RELEASEFILEPATH) del $(RELEASEFILEPATH)
   @$(ZIP) -j -9 $(RELEASEFILEPATH) $(EXE)\VIBinData.dll
-  #@$(ZIP) -j -9 $(RELEASEFILEPATH) $(DOCS)\ReadMe.txt $(ROOT)\LICENSE
+  #@$(ZIP) -j -9 $(RELEASEFILEPATH) $(ROOT)\README.md $(ROOT)\LICENSE.md
 
 # Clean up unwanted files
 clean:
