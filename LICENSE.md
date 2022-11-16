@@ -4,7 +4,7 @@ The DelphiDabbler Version Information Manipulator Library (the "Library"), is an
 
 ## Source code
 
-The source code of portions of this Library is available from the [delphidabbler/vilib](https://github.com/delphidabbler/vilib) project on GitHub, under the terms of the [Mozilla Public License](https://www.mozilla.org/MPL/).
+The source code of portions of this Library is available from the [delphidabbler/vilib](https://github.com/delphidabbler/vilib) project on GitHub, under the terms of the [Mozilla Public License v2.0](https://www.mozilla.org/en-US/MPL/2.0/).
 
 The demo code is released under the [MIT License](https://delphidabbler.mit-license.org/2022-), with the exception of `Demos/VIReaderDemo/UVerInfoFileStream.pas` and `Demos/ResRWDemo/Vendor/PJResFile.pas` which are licensed under the [Mozilla Public License v2](https://www.mozilla.org/en-US/MPL/2.0/).
 
@@ -12,7 +12,7 @@ The demo code is released under the [MIT License](https://delphidabbler.mit-lice
 
 ### The Library
 
-Permission is granted to anyone to use the executable (binary) version of the Library, including modified versions, providing the source code of any modified version of the Library is made available under the terms of the Mozilla Public License.
+Permission is granted to anyone to use the executable (binary) version of the Library, including modified versions, providing the source code of any modified version of the Library is made available under the terms of the Mozilla Public License v2.0.
 
 You may distribute the executable version, in original or modified form, with your applications or other libraries that call into the library provided:
 
@@ -22,13 +22,14 @@ You may distribute the executable version, in original or modified form, with yo
 
 3. Modified versions of the library must be plainly marked as such, and must not be misrepresented as being the original software.
 
-4. If you distribute a product that uses this Library, or a modified version of it, then somewhere in the product's supporting documentation you must place an acknowledgment of the library's author and copyright, a statement that the source code is available under the Mozilla Public License and information about how to obtain a copy of the source code. Acceptable documents include your product's readme file, your license file, the program's help file or any about box. The following statement will suffice, but suitable alternatives are permitted:
+4. If you distribute a product that uses this Library, or a modified version of it, then somewhere in the product's supporting documentation you must place an acknowledgment of the library's author and copyright, a statement that the source code is available under the Mozilla Public License v2.0 and information about how to obtain a copy of the source code. Acceptable documents include your product's readme file, your license file, the program's help file or any about box. The following statement will suffice, but suitable alternatives are permitted:
 
    ~~~text
    "VIBinData.dll was written by Peter D Johnson and is copyright (C)
    2002-2022 Peter D Johnson, www.delphidabbler.com. Portions of the
    DLL's source code are available from https://github.com/delphidabbler/vilib
-   under the terms of the Mozilla Public License (https://www.mozilla.org/MPL/)."
+   under the terms of the Mozilla Public License v2.0
+   (https://www.mozilla.org/en-US/MPL/2.0/)."
    ~~~
 
 5. Should the Library, or a modified version of it be redistributed on its own rather than as part of a larger work, then the following files must be included in the distribution:
@@ -38,10 +39,6 @@ You may distribute the executable version, in original or modified form, with yo
    * the change log (ChangeLog.txt)
 
    If a modified version of the Library is being distributed then `CHANGELOG.md` should be updated to record the changes and ReadMe.txt may be modified as necessary.
-
-### Demo Code
-
-The demo programs are released under the [MIT License](https://delphidabbler.mit-license.org/2022-).
 
 ### Disclaimer
 
