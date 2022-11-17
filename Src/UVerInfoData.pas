@@ -153,6 +153,19 @@ type
       const Name: string): TVerInfoRec;
       {Creates a new node (record) of required type (16 or 32 bit) with the
       given name as a child of the given owner record}
+    class procedure DecodeTrans(const Trans: DWORD;
+      out Language, CharSet: WORD);
+      {Decodes the translation encoded in Trans into its langauge and character
+      set components. If WORD(Nil^) is passed for either Language or CharSet
+      then the value is not returned}
+    class function EncodeTrans(const OldTrans: DWORD;
+      const Language, CharSet: WORD): DWORD;
+      {Updates the given translation code OldTrans with the either or both of
+      the given language and character set codes. If either of these codes are
+      $FFFF they are ignored}
+    class procedure StampFFI(var FFI: TVSFixedFileInfo);
+      {Ensures that given fixed file info structure has correct version (1.0)
+      and signature}
   public
     // General methods
     constructor Create(VerResType: TVerResType);
@@ -251,6 +264,10 @@ type
     procedure DeleteString(TableIdx, StringIdx: Integer);
       {Delete the string info item at the given index in the string table at the
       given table index: exception if either index is out of bounds}
+    // Helper method
+    class function TransToString(const Language, CharSet: WORD): string;
+      {Returns a string representation of the translation identified by the
+      given language and character set codes}
   end;
 
   {
@@ -261,12 +278,6 @@ type
   }
   EVerInfoData = class(Exception);
 
-
-{ Helper routines }
-
-function TransToString(const Language, CharSet: WORD): string;
-  {Returns a string representation of the translation identified by the given
-  language and character set codes}
 
 implementation
 
@@ -283,47 +294,6 @@ const
   cVarFileInfo = 'VarFileInfo';
   cTranslation = 'Translation';
   cStringFileInfo = 'StringFileInfo';
-
-{ Helper routines }
-
-function TransToString(const Language, CharSet: WORD): string;
-  {Returns a string representation of the translation identified by the given
-  language and character set codes}
-begin
-  Result := IntToHex(Language, 4) + IntToHex(CharSet, 4);
-end;
-
-procedure DecodeTrans(const Trans: DWORD; out Language, CharSet: WORD);
-  {Decodes the translation encoded in Trans into its langauge and character set
-  components. If WORD(Nil^) is passed for either Language or CharSet then the
-  value is not returned}
-begin
-  if Assigned(@Language) then
-    Language := LoWord(Trans);
-  if Assigned(@CharSet) then
-    CharSet := HiWord(Trans);
-end;
-
-function EncodeTrans(const OldTrans: DWORD;
-  const Language, CharSet: WORD): DWORD;
-  {Updates the given translation code OldTrans with the either or both of the
-  given lanaguage and character set codes. If either of these codes are $FFFF
-  they are ignored}
-begin
-  Result := OldTrans;
-  if Language <> $FFFF then
-    LongRec(Result).Lo := Language;
-  if CharSet <> $FFFF then
-    LongRec(Result).Hi := CharSet;
-end;
-
-procedure StampFFI(var FFI: TVSFixedFileInfo);
-  {Ensures that given fixed file info structure has correct version (1.0) and
-  signature}
-begin
-  FFI.dwSignature := $FEEF04BD;
-  FFI.dwStrucVersion := $00010000;
-end;
 
 type
   {
@@ -464,6 +434,18 @@ begin
   Result.Name := Name;
 end;
 
+class procedure TVerInfoData.DecodeTrans(const Trans: DWORD; out Language,
+  CharSet: WORD);
+  {Decodes the translation encoded in Trans into its langauge and character set
+  components. If WORD(Nil^) is passed for either Language or CharSet then the
+  value is not returned}
+begin
+  if Assigned(@Language) then
+    Language := LoWord(Trans);
+  if Assigned(@CharSet) then
+    CharSet := HiWord(Trans);
+end;
+
 procedure TVerInfoData.DeleteString(TableIdx, StringIdx: Integer);
   {Delete the string info item at the given index in the string table at the
   given table index: exception if either index is out of bounds}
@@ -530,6 +512,19 @@ destructor TVerInfoData.Destroy;
 begin
   fVIRoot.Free;
   inherited;
+end;
+
+class function TVerInfoData.EncodeTrans(const OldTrans: DWORD; const Language,
+  CharSet: WORD): DWORD;
+  {Updates the given translation code OldTrans with the either or both of the
+  given language and character set codes. If either of these codes are $FFFF
+  they are ignored}
+begin
+  Result := OldTrans;
+  if Language <> $FFFF then
+    LongRec(Result).Lo := Language;
+  if CharSet <> $FFFF then
+    LongRec(Result).Hi := CharSet;
 end;
 
 procedure TVerInfoData.EnsureRequiredNodes;
@@ -958,6 +953,22 @@ procedure TVerInfoData.SetTranslation(TransIdx: Integer; LanguageID,
   character set. An exception is raised if the index is out of range}
 begin
   InternalSetTranslation(TransIdx, EncodeTrans(0, LanguageID, CharSet));
+end;
+
+class procedure TVerInfoData.StampFFI(var FFI: TVSFixedFileInfo);
+  {Ensures that given fixed file info structure has correct version (1.0) and
+  signature}
+begin
+  FFI.dwSignature := $FEEF04BD;
+  FFI.dwStrucVersion := $00010000;
+end;
+
+class function TVerInfoData.TransToString(const Language,
+  CharSet: WORD): string;
+  {Returns a string representation of the translation identified by the given
+  language and character set codes}
+begin
+  Result := IntToHex(Language, 4) + IntToHex(CharSet, 4);
 end;
 
 function TVerInfoData.VerInfoRecClass: TVerInfoRecClass;

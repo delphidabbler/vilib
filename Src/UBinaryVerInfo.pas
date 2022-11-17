@@ -323,7 +323,7 @@ function TVerInfoBinary.AddStringTableByCode(
   is set to the index of the new string table or -1 if an error occurs}
 begin
   Result := AddStringTable(
-    TransToString(TransCode.LanguageID, TransCode.CharSet),
+    TVerInfoData.TransToString(TransCode.LanguageID, TransCode.CharSet),
     NewIndex
   );
 end;
@@ -724,7 +724,7 @@ var
   TransStr: string; // the translation string to look up
 begin
   // Make translation string from laguage id and code
-  TransStr := TransToString(Code.LanguageID, Code.CharSet);
+  TransStr := TVerInfoData.TransToString(Code.LanguageID, Code.CharSet);
   // Find the index of the string table
   Result := IndexOfStringTable(TransStr, Index);
 end;
