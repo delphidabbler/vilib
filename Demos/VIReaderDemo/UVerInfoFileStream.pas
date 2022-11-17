@@ -1,9 +1,9 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2022, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2022, Peter Johnson (https://gravatar.com/delphidabbler).
  *
  * Defines a class that provides a TStream interface to a Windows version
  * information resource embedded in a file of a type that can have Windows
