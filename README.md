@@ -12,7 +12,14 @@ The library's advantage in writing version information resources is that it can 
 
 The Library is distributed in a zip file.
 
-To use the library simply copy the file `VIBinData.dll` to a  suitable directory and call into it from your program. It is recommended that the DLL is placed in the same directory as the program that calls it.
+To use the library simply extract the file `VIBinData.dll`, copy it to a suitable directory and call into it from your program. It is recommended that the DLL is placed in the same directory as the program that calls it.
+
+The zip file also contains four Markdown formatted text files:
+
+* `README.md` - this file.
+* `UserGuide.md` - information about how to use the DLL.
+* `CHANGELOG.md` - records changes in each release.
+* `LICENSE.md` - by using the library you are deemed to have agrred to this license.
 
 ## Documentation & Demos
 
@@ -41,6 +48,22 @@ Providing you comply with the terms and conditions of the end user license agree
 This project is using the [Gitflow](https://nvie.com/posts/a-successful-git-branching-model/) methodology.
 
 To contribute please fork the `develop` branch, create a feature branch with a name starting with `feature/` and do your coding in that branch. If you are implementing an issue start the name with the issue number. When ready open a pull request for your feature branch.
+
+### Compiling
+
+Delphi 11 is used for development. Later versions may be able to be used. It is possible, but not tested, that Delphi 10.4 may be suitable.
+
+Open `Src/VIBinData.dproj` to build the DLL or `VIBinDataDemos.groupproj` to build the demos.
+
+#### Prerequisites
+
+`Src/VIBinData.dproj` has a build event that requires [DelphiDabbler Version Information Editor](https://delphidabbler.com/software/vied) (`VIEd.exe`) to be installed and the path of the directory where `VIEd.exe` is installed to be available in the `VIEDROOT` environment variable. `VIEDROOT` can either be set before starting the IDE, or it can be set in the _Environment Variables_ pane of the _Options_ dialogue box (Use _Tools | Options_ to display it).
+
+> **Note:** `VIEd.exe` is used in a build target to create the required version information resource.
+
+### Deployment
+
+To create a zip file suitable for deploying a modified version of the library, run `Deploy.bat` (in the repo root) from the command line. See the comments in `Deploy.bat` for how to run the script.
 
 ## Updates
 
