@@ -186,10 +186,10 @@ type
     // Variable info methods
     function GetTranslationCount: Integer;
       {Returns number of translations in the version information}
-    function GetLanguageID(TransIdx: Integer): Word;
+    function GetTranslationLanguageID(TransIdx: Integer): Word;
       {Returns the language id of the translation at the given index: exception
       if index is out of range}
-    function GetCharSet(TransIdx: Integer): Word;
+    function GetTranslationCharSet(TransIdx: Integer): Word;
       {Returns the character set of the translation at the given index:
       exception if index is out of range}
     function GetTranslationString(TransIdx: Integer): string;
@@ -419,8 +419,8 @@ begin
   // Add translations to match those in source object
   for SrcTransIdx := 0 to Pred(Source.GetTranslationCount) do
     Self.AddTranslation(
-      Source.GetLanguageID(SrcTransIdx),
-      Source.GetCharSet(SrcTransIdx)
+      Source.GetTranslationLanguageID(SrcTransIdx),
+      Source.GetTranslationCharSet(SrcTransIdx)
     );
   // Add string tables and string entries to match those in source object
   for SrcStrTableIdx := 0 to Pred(Source.GetStringTableCount) do
@@ -588,14 +588,6 @@ begin
     Result := nil;
 end;
 
-function TVerInfoData.GetCharSet(TransIdx: Integer): Word;
-  {Returns the character set of the translation at the given index: exception if
-  index is out of range}
-begin
-  // Decode the translation value at given index to get just the char set
-  DecodeTrans(InternalGetTranslation(TransIdx), Word(nil^), Result);
-end;
-
 function TVerInfoData.GetFixedFileInfo: TVSFixedFileInfo;
   {Returns the version information's fixed file information record}
 var
@@ -613,14 +605,6 @@ begin
   else
     // copy date from record into result
     Result := Ptr^;
-end;
-
-function TVerInfoData.GetLanguageID(TransIdx: Integer): Word;
-  {Returns the language id of the translation at the given index: exception if
-  index is out of range}
-begin
-  // Decode the translation value at index  to get just the language id
-  DecodeTrans(InternalGetTranslation(TransIdx), Result, Word(nil^));
 end;
 
 function TVerInfoData.GetStringCount(TableIdx: Integer): Integer;
@@ -731,11 +715,27 @@ begin
   Result := StrRec.GetStringValue;
 end;
 
+function TVerInfoData.GetTranslationCharSet(TransIdx: Integer): Word;
+  {Returns the character set of the translation at the given index: exception if
+  index is out of range}
+begin
+  // Decode the translation value at given index to get just the char set
+  DecodeTrans(InternalGetTranslation(TransIdx), Word(nil^), Result);
+end;
+
 function TVerInfoData.GetTranslationCount: Integer;
   {Returns number of translations in the version information}
 begin
   // Get count of translation from translation record (which must exist)
   Result := InternalGetTranslationCount(GetTranslationRec);
+end;
+
+function TVerInfoData.GetTranslationLanguageID(TransIdx: Integer): Word;
+  {Returns the language id of the translation at the given index: exception if
+  index is out of range}
+begin
+  // Decode the translation value at index  to get just the language id
+  DecodeTrans(InternalGetTranslation(TransIdx), Result, Word(nil^));
 end;
 
 function TVerInfoData.GetTranslationRec: TVerInfoRec;

@@ -649,8 +649,8 @@ begin
   Value.Code := 0;
   try
     // Try to set the translation code from the language id and character set
-    Value.LanguageID := fVIData.GetLanguageID(Index);
-    Value.CharSet := fVIData.GetCharSet(Index);
+    Value.LanguageID := fVIData.GetTranslationLanguageID(Index);
+    Value.CharSet := fVIData.GetTranslationCharSet(Index);
     Result := Success;
   except
     on E: Exception do
