@@ -234,11 +234,6 @@ type
       2: (Orig: TVSFixedFileInfo);          // standard record
   end;
 
-resourcestring
-  // Error messages
-  sBadStrName = 'There is no string named "%0:s" in translation %1:d';
-
-
 function CreateInstance(const CLSID: TGUID; out Obj): HResult; stdcall;
   {If the library supports the object CLSID then an instance of the required
   object is created. A reference to the object is stored in Obj and S_OK is
@@ -322,10 +317,18 @@ function TVerInfoBinary.AddStringTableByCode(
   {Adds a new string table indentified by the given translation code. NewIndex
   is set to the index of the new string table or -1 if an error occurs}
 begin
-  Result := AddStringTable(
-    TVerInfoData.TransToString(TransCode.LanguageID, TransCode.CharSet),
-    NewIndex
-  );
+  // Set error value of string table index
+  NewIndex := -1;
+  try
+    // Try to add new string table and record its index
+    NewIndex := fVIData.AddStringTableByTrans(
+      TransCode.LanguageID, TransCode.CharSet
+    );
+    Result := Success;
+  except
+    on E: Exception do
+      Result := HandleException(E);
+  end;
 end;
 
 function TVerInfoBinary.AddTranslation(const Value: TTranslationCode;
@@ -399,16 +402,9 @@ function TVerInfoBinary.DeleteStringByName(const TableIdx: Integer;
   which has the given table index. It is an error if no string item with the
   given name exists in the string table or the string table index is out of
   bounds}
-var
-  StrIdx: Integer;  // index of string item with given name in string table
 begin
   try
-    // Get index of string item in table and check it exists
-    StrIdx := fVIData.IndexOfString(TableIdx, Name);
-    if StrIdx = -1 then
-      Error(sBadStrName, [Name, TableIdx]);
-    // Delete the string item
-    fVIData.DeleteString(TableIdx, StrIdx);
+    fVIData.DeleteStringByName(TableIdx, Name);
     Result := Success;
   except
     on E: Exception do
@@ -559,22 +555,13 @@ function TVerInfoBinary.GetStringTableTransCode(const Index: Integer;
   out TransCode: TTranslationCode): HResult;
   {Returns the translation code associated with the string table at the given
   index in TransCode. It is an error if the table index is out of bounds}
-
-  // ---------------------------------------------------------------------------
-  function StrToTransCode(const Str: string): TTranslationCode;
-    {Converts a translation string to a translation code}
-  begin
-    Result.LanguageID := StrToInt('$' + Copy(Str, 1, 4));
-    Result.CharSet := StrToInt('$' + Copy(Str, 5, 4));
-  end;
-  // ---------------------------------------------------------------------------
-
 begin
   // Set translation code to 0 in case of error
   TransCode.Code := 0;
   try
-    // Attempt to get the transaltion code
-    TransCode := StrToTransCode(fVIData.GetStringTableTransStr(Index));
+    // Build the translation code from language ID & character set
+    TransCode.LanguageID := fVIData.GetStringTableLanguageID(Index);
+    TransCode.CharSet := fVIData.GetStringTableCharSet(Index);
     Result := Success;
   except
     on E: Exception do
@@ -621,18 +608,11 @@ function TVerInfoBinary.GetStringValueByName(const TableIdx: Integer;
   {Sets Value to the string item with the given name in the string table with
   the given string table index in Value. It is an error if there is no string
   item with the given name in the table or if the table index is out of bounds}
-var
-  StringIdx: Integer; // index of string item with given name in table
 begin
   // Set nul value in case of error
   Value := '';
   try
-    // Get index of string item with given name & check it exists
-    StringIdx := fVIData.IndexOfString(TableIdx, Name);
-    if StringIdx = -1 then
-      Error(sBadStrName, [Name, TableIdx]);
-    // Try to get value of string at required index
-    Value := fVIData.GetStringValue(TableIdx, StringIdx);
+    Value := fVIData.GetStringValueByName(TableIdx, Name);
     Result := Success;
   except
     on E: Exception do
@@ -720,13 +700,17 @@ function TVerInfoBinary.IndexOfStringTableByCode(
   const Code: TTranslationCode; out Index: Integer): HResult;
   {Sets Index to the index of the string table identified by a translation
   string made up from the given translation code, or -1 if no such string table}
-var
-  TransStr: string; // the translation string to look up
 begin
-  // Make translation string from laguage id and code
-  TransStr := TVerInfoData.TransToString(Code.LanguageID, Code.CharSet);
-  // Find the index of the string table
-  Result := IndexOfStringTable(TransStr, Index);
+  // Set index to -1 in case of error
+  Index := -1;
+  try
+    // Try to get the index
+    Index := fVIData.IndexOfStringTableByTrans(Code.LanguageID, Code.CharSet);
+    Result := Success;
+  except
+    on E: Exception do
+      Result := HandleException(E);
+  end;
 end;
 
 function TVerInfoBinary.IndexOfTranslation(
@@ -821,14 +805,7 @@ begin
   // Set string index to -1 in case of error
   StrIndex := -1;
   try
-    // Find idex of string name (or -1 if no such item)
-    StrIndex := fVIData.IndexOfString(TableIdx, Name);
-    if StrIndex = -1 then
-      // No such string: add it and record index
-      StrIndex := fVIData.AddString(TableIdx, Name, Value)
-    else
-      // String exists: update value
-      fVIData.SetStringValue(TableIdx, StrIndex, Value);
+    StrIndex := fVIData.AddOrUpdateString(TableIdx, Name, Value);
     Result := Success;
   except
     on E: Exception do
@@ -855,16 +832,9 @@ function TVerInfoBinary.SetStringByName(const TableIdx: Integer;
   {Sets the value of the string with the given name in the the string table with
   the given index. It is an error if the string table index is out of range or
   if a string with the given name does not exist}
-var
-  StrIdx: Integer;  // index of string in string table
 begin
   try
-    // Get index of string with given name: ensure it exists
-    StrIdx := fVIData.IndexOfString(TableIdx, Name);
-    if StrIdx = -1 then
-      Error(sBadStrName, [Name, TableIdx]);
-    // Set the string value
-    fVIData.SetStringValue(TableIdx, StrIdx, Value);
+    fVIData.SetStringValueByName(TableIdx, Name, Value);
     Result := Success;
   except
     on E: Exception do
