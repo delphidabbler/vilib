@@ -1,5 +1,6 @@
 ﻿# Version Information Manipulator Library User Guide
 
+> This user guide assumes that you know what kinds of information can be stored in version information resources. If you need to brush up on your knowledge please see Microsoft's  [Version Information Reference](https://learn.microsoft.com/en-us/windows/win32/menurc/version-information-reference) and their [VERSIONINFO resource](https://learn.microsoft.com/en-us/windows/win32/menurc/versioninfo-resource) documentation.
 ## Contents
 
 * [Introduction](#introduction)
