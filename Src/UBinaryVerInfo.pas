@@ -52,9 +52,6 @@ type
       data}
     fLastError: WideString;
       {The last error message}
-    procedure Error(const FmtStr: string; const Args: array of const);
-      {Raises an EVerInfoBinary exception with a message made up from the given
-      format string and argumements}
     function Success: HResult;
       {Sets a successful result: returns S_OK and clears the last error message}
     function HandleException(const E: Exception): HResult;
@@ -212,14 +209,6 @@ type
     destructor Destroy; override;
       {Class destructor: frees owned version info data object}
   end;
-
-  {
-  EVerInfoBinary:
-    Private class of exception raised by TVerInfoBinary.
-
-    Inheritance: EVerInfoBinary -> [Exception] -> [TObject]
-  }
-  EVerInfoBinary = class(Exception);
 
   {
   TFixedFileInfoAccessor:
@@ -446,14 +435,6 @@ destructor TVerInfoBinary.Destroy;
 begin
   fVIData.Free;
   inherited;
-end;
-
-procedure TVerInfoBinary.Error(const FmtStr: string;
-  const Args: array of const);
-  {Raises an EVerInfoBinary exception with a message made up from the given
-  format string and argumements}
-begin
-  raise EVerInfoBinary.CreateFmt(FmtStr, Args);
 end;
 
 function TVerInfoBinary.GetFixedFileInfo(
