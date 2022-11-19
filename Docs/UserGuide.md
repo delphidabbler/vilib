@@ -9,8 +9,8 @@
     * [Deciding Which CLSID To Use](#deciding-which-clsid-to-use)
 * [Using the Objects](#using-the-objects)
     * [Return Values & Calling Conventions](#return-values--calling-conventions)
-    * [_IVerInfoBinaryReader_ Methods](#iverinfobinaryreader-methods)
-    * [_IVerInfoBinary_ Methods](#iverinfobinary-methods)
+    * [_IVerInfoBinaryReader_ / _IVerInfoBinaryReader2_ Methods](#iverinfobinaryreader--iverinfobinaryreader2-methods)
+    * [_IVerInfoBinary_ / _IVerInfoBinary2_ Methods](#iverinfobinary--iverinfobinary2-methods-methods)
 * [Accessing Binary Version Information](#accessing-binary-version-information)
     * [Reading Version Information from a 32/64 Bit Executable](#reading-version-information-from-a-3264-bit-executable)
     * [Reading & Writing Version Information In 32 Bit Resource Files](#reading--writing-version-information-in-32-bit-resource-files)
@@ -39,16 +39,18 @@ The CLSID identifying the desired object is provided as the first parameter and 
 
 All further interaction with the DLL is done using the supplied object via the methods of its supported interface(s).
 
-The supported CLSIDs and their associated interfaces are:
+The supported CLSIDs and the interfaces they support are listed below. When passing one of the CLSIDs to _CreateInstance_ a variable of any of the supported interface types can be provided as the _Obj_ parameter.
 
 | CLSID | Supports | Description |
 |-------|----------|-------------|
-| `CLSID_VerInfoBinaryReaderW` | _IVerInfoBinaryReader_ | Provides read only access to version information stored in Unicode format. |
-| `CLSID_VerInfoBinaryW` | _IVerInfoBinary_ & _IVerInfoBinaryReader_ | Provides read/write access to version information stored in Unicode format. |
-| `CLSID_VerInfoBinaryReaderA` | _IVerInfoBinaryReader_ | Provides read only access to version information stored in ANSI format.|
-| `CLSID_VerInfoBinaryA` | _IVerInfoBinary_ & _IVerInfoBinaryReader_ | Provides read/write access to version information stored in ANSI format. |
+| `CLSID_VerInfoBinaryReaderW` | _IVerInfoBinaryReader_ & _IVerInfoBinaryReader2_ | Provides read only access to version information stored in Unicode format. |
+| `CLSID_VerInfoBinaryW` | _IVerInfoBinary_, _IVerInfoBinary2_, _IVerInfoBinaryReader_ & _IVerInfoBinaryReader2_ | Provides read/write access to version information stored in Unicode format. |
+| `CLSID_VerInfoBinaryReaderA` | _IVerInfoBinaryReader_ & _IVerInfoBinaryReader2_ | Provides read only access to version information stored in ANSI format.|
+| `CLSID_VerInfoBinaryA` | _IVerInfoBinary_, _IVerInfoBinary2_, _IVerInfoBinaryReader_ & _IVerInfoBinaryReader2_ | Provides read/write access to version information stored in ANSI format. |
 
-Note that _IVerInfoBinaryReader_ provides read only access to version information that has been read into the DLL's version information object while _IVerInfoBinary_ provides read/write access to the object, permitting version information to be created and modified.
+Note that _IVerInfoBinaryReader_ & _IVerInfoBinaryReader2_ provide read only access to version information that has been read into the DLL's version information object while _IVerInfoBinary_ & _IVerInfoBinary2_ provide read/write access to the object, permitting version information to be created and modified.
+
+_IVerInfoBinary2_ & _IVerInfoBinaryReader2_ differ from _IVerInfoBinary_ & _IVerInfoBinaryReader_ only in that they both provide an additional method, _IndexOfString_.
 
 See [Deciding Which CLSID To Use](#deciding-which-clsid-to-use) below for a discussion of which object and which interface to use in what circumstances.
 
@@ -76,7 +78,7 @@ _CreateInstance_ can then be used to create the required object as follows:
 
 ~~~pascal
 var
-  VI: IVerInfoBinaryReader;
+  VI: IVerInfoBinaryReader; // could be IVerInfoBinaryReader2
 begin
   // Load the required object: can be any of the CLSID_*** constants.
   // Here we're using the 32 bit read only object.
@@ -96,7 +98,7 @@ To import dynamically you can something like the following code:
 var
   DLL: THandle;
   CreateFunc: TVerInfoBinaryCreateFunc;
-  VI: IVerInfoBinary;
+  VI: IVerInfoBinary2;  // could be IVerInfoBinary
 begin
   // Set default values in case of exceptions
   DLL := 0;
@@ -171,7 +173,7 @@ This just leaves the problem of how to access version information stored in exec
 
 ## Using the Objects
 
-As you know each object exposes either a read-only _IVerInfoBinaryReader_ or a _IVerInfoBinary_ read/write interface. We will discuss them separately below.
+As you know each object exposes either a read-only _IVerInfoBinaryReader_ / _IVerInfoBinaryReader2_ interface or a _IVerInfoBinary_ / _IVerInfoBinary2_ read/write interface. We will discuss them separately below.
 
 ### Return Values & Calling Conventions
 
@@ -205,11 +207,11 @@ begin
 end;
 ~~~
 
-### _IVerInfoBinaryReader_ Methods
+### _IVerInfoBinaryReader_ / _IVerInfoBinaryReader2_ Methods
 
-Being read-only, _IVerInfoBinaryReader_ is used when you just want to explore some existing version information without modifying it.
+Being read-only, _IVerInfoBinaryReader_ & _IVerInfoBinaryReader2_ are used when you just want to explore some existing version information without modifying it.
 
-In this section the available methods are reviewed and a brief explanation of their purpose is is provided.
+In this section the available methods are reviewed and a brief explanation of their purpose is is provided. Except where explicitly stated all methods are supported by both interfaces.
 
 > Details of parameters and exactly how to call each method are not provided here because the methods are individually documented in the `IntfBinaryVerInfo.pas` unit. Please read that unit to learn how to call each method.
 
@@ -256,18 +258,22 @@ Strings are stored as name/value pairs. The next three methods are used to get t
 * _GetStringValue_ - get the value at given index in string table.
 * _GetStringValueByName_ - get the value associated with the given name in the string table.
 
+For _IVerInfoBinaryReader2_ only, we can also get the index of a string by name within a string table, or check if it exists by using:
+
+* _IndexOfString_ [_IVerInfoBinaryReader2_ only] - get the index of named string within string table with given index, or `-1` on error.
+
 Finally, there are some miscellaneous methods:
 
 * _Clear_ - deletes all translations and string tables and zeros all the fixed file information fields, except for the signature and structure version.
-* _Assign_ - copies version information from another _IVerInfoBinaryReader_ object.
+* _Assign_ - copies version information from another _IVerInfoBinaryReader_ / _IVerInfoBinaryReader2_ object.
 * _ReadFromStream_ - reads binary version information from an _IStream_ opened on some version information data. For details see [Accessing Binary Version Information](#accessing-binary-version-information) below.
 * _LastErrorMessage_ - returns a _WideString_ value that gives a description of the last error. This is the only method that doesn't return a _HRESULT_ value.
 
-### _IVerInfoBinary_ Methods
+### _IVerInfoBinary_ / _IVerInfoBinary2_ Methods
 
-_IVerInfoBinary_ descends from _IVerInfoBinaryReader_ and therefore exposes all of _IVerInfoBinaryReader_'s methods. Those methods are all described above. In this section we will only discuss the methods that are unique to _IVerInfoBinary_, i.e. those that are used to modify version information.
+_IVerInfoBinary_ descends from _IVerInfoBinaryReader_ while _IVerInfoBinary2_ descends from _IVerInfoBinaryReader2_ so they expose all of the methods of their parent interfaces. Those methods are all described above. In this section we will only discuss the methods that are unique to _IVerInfoBinary_ & _IVerInfoBinary2_, i.e. those that are used to modify version information. All of the following methods are supported by both interfaces,
 
-The purpose of _IVerInfoBinary_ is to be able to modify version information before writing it to, for example, a 32 bit resource file.
+The purpose of _IVerInfoBinary_ / _IVerInfoBinary2_ is to be able to modify version information before writing it to, for example, a 32 bit resource file.
 
 To update the fixed file information use one of the following methods:
 
@@ -298,7 +304,7 @@ String names within a specified string table can be modified using the following
 
 Lastly there are the following additional or modified methods:
 
-* _Assign_ - sets the content to that of another _IVerInfoBinary_ object instance.
+* _Assign_ - sets the content to that of another _IVerInfoBinary_ / _IVerInfoBinary2_ object instance.
 * _WriteToStream_ - writes binary version information to an _IStream_ that can update the output document. For details of how to do this see [Accessing Binary Version Information](#accessing-binary-version-information) below .
 
 ## Accessing Binary Version Information
@@ -434,6 +440,7 @@ The following function will load any version information contained in executable
 
 ~~~pascal
 procedure ReadVIFromExe(VI: IVerInfoBinaryReader; ExeFile: string);
+  // Note: A IVerInfoBinaryReader2 instance can be passed to this procedure
 var
   ExeStream: TVerInfoFileStream;
   VIStream: IStream;
@@ -446,6 +453,7 @@ begin
   finally
     ExeStream.Free;
   end;
+end;
 ~~~
 
 The main point to note is that _TVerInfoFileStream_ is a _TStream_ descendant while _IVerInfoBinaryReader.ReadFromStream_ takes an _IStream_ parameter. We use Delphi's _TStreamAdapter_ to provide an _IStream_ interface to the _TVerInfoFileStream_ object.
@@ -460,6 +468,7 @@ First let us consider how to read data from a resource file:
 
 ~~~pascal
 procedure ReadVIFromResourceFile(VI: IVerInfoBinaryReader; ResFilePath: string);
+  // Note: A IVerInfoBinaryReader2 instance can be passed to this procedure
 var
   ResFile: TPJResourceFile;
   VIEntry: TPJResourceEntry;
@@ -497,6 +506,7 @@ Finally, we need to be able to write a version information resource to a resourc
 
 ~~~pascal
 procedure WriteVIToResourceFile(VI: IVerInfoBinary; ResFilePath: string);
+  // Note: A IVerInfoBinary2 instance can be passed to this procedure
 var
   ResFile: TPJResourceFile;
   VIEntry: TPJResourceEntry;
