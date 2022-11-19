@@ -166,6 +166,20 @@ type
   end;
 
   {
+  IVerInfoBinaryReader2:
+    Extension of IVerInfoBinaryReader tthat ads new IndexOfString method.
+
+    Inheritance: IVerInfoBinaryReader2 -> IVerInfoBinaryReader -> [IUnknown]
+  }
+  IVerInfoBinaryReader2 = interface(IVerInfoBinaryReader)
+    ['{D94AC867-16FE-45CA-92AA-A1B690EF38D5}']
+    function IndexOfString(TableIdx: Integer; const Name: WideString;
+      out Index: Integer): HResult; stdcall;
+      {Sets Index to the index of the string with the given name in the string
+      table with the given TableIdx, or -1 if no such string exists}
+  end;
+
+  {
   IVerInfoBinary:
     Interface that enables access to and modification of binary version
     information data. It supports all the methods of IVerInfoBinaryReader plus
@@ -250,6 +264,20 @@ type
     // Additional general methods
     function WriteToStream(const Stm: IStream): HResult; stdcall;
       {Writes the binary version information to the given stream}
+  end;
+
+  {
+  IVerInfoBinary2:
+    Extension of IVerInfoBinary tthat ads new IndexOfString method.
+
+    Inheritance: IVerInfoBinary2 -> IVerInfoBinary -> [IUnknown]
+  }
+  IVerInfoBinary2 = interface(IVerInfoBinary)
+    ['{0068F5D1-7338-494C-8226-0A3A1081F513}']
+    function IndexOfString(TableIdx: Integer; const Name: WideString;
+      out Index: Integer): HResult; stdcall;
+      {Sets Index to the index of the string with the given name in the string
+      table with the given TableIdx, or -1 if no such string exists}
   end;
 
   {

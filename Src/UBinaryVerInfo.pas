@@ -39,13 +39,15 @@ type
 
   {
   TVerInfoBinary:
-    Class that implements the IVerInfoBinary and IVerInfoBinaryReader interface
-    exported from the DLL.
+    Class that implements the v1 & v2 of the IVerInfoBinary and
+    IVerInfoBinaryReader interfaces exported from the DLL.
 
     Inheritance: TVerInfoBinary -> [TInterfacedObject] -> [TObject]
   }
   TVerInfoBinary = class(TInterfacedObject,
-    IUnknown, IVerInfoBinaryReader, IVerInfoBinary)
+    IUnknown,
+    IVerInfoBinaryReader, IVerInfoBinaryReader2,
+    IVerInfoBinary, IVerInfoBinary2)
   private
     fVIData: TVerInfoData;
       {Version information data object used to access and manipulate the binary
@@ -191,6 +193,10 @@ type
       table which has the given table index. It is an error if no string item
       with the given name exists in the string table or the string table index
       is out of bounds}
+    function IndexOfString(TableIdx: Integer; const Name: WideString;
+      out Index: Integer): HResult; stdcall;
+      {Sets Index to the index of the string with the given name in the string
+      table with the given TableIdx, or -1 if no such string exists}
     function Clear: HResult; stdcall;
       {Clears the version information data}
     function Assign(const Source: IVerInfoBinaryReader): HResult; stdcall;
@@ -658,6 +664,22 @@ function TVerInfoBinary.HandleException(const E: Exception): HResult;
 begin
   Result := E_FAIL;
   fLastError := E.Message;
+end;
+
+function TVerInfoBinary.IndexOfString(TableIdx: Integer; const Name: WideString;
+  out Index: Integer): HResult;
+  {Sets Index to the index of the string with the given name in the string table
+  with the given TableIdx, or -1 if no such string exists}
+begin
+  // Set index to -1 in case of error
+  Index := -1;
+  try
+    Index := fVIData.IndexOfString(TableIdx, Name);
+    Result := Success;
+  except
+    on E: Exception do
+      Result := HandleException(E);
+  end;
 end;
 
 function TVerInfoBinary.IndexOfStringTable(const TransStr: WideString;
