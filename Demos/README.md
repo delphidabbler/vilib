@@ -218,6 +218,10 @@ If you want to delete a string, enter its name in the _String name_ edit box and
 
 Mistakes in string names can only be fixed by deleting the erroneous name and then creating a new value with the correct name.
 
+Some methods† require you to provide the index of a string in the string table as a parameter. The code under the _Index Of String_ button finds the index of a string by name. You must specify the index of the required string table in the _String Table index #_ edit box and enter the name of the string in the _String name_ edit box. Now click the _Index Of String_ button.
+
+> † None of the methods that take a string's index within its string table are demonstrated in this program. To find which they are take a look at the declaration of _IVerInfoBinary_ in `IntfBinaryVerInfo.pas` (included with the demo source code).
+
 ### Summing up
 
 This demo uses most, but not all, of the read, write and information methods exposed by the version information object.

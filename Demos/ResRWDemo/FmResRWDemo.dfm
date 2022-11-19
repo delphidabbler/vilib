@@ -309,4 +309,16 @@ object ResRWDemoForm: TResRWDemoForm
     TabOrder = 20
     OnClick = btnSetFFIClick
   end
+  object btnIndexOfString: TButton
+    Left = 413
+    Top = 62
+    Width = 129
+    Height = 25
+    Hint = 
+      'Enter string name String name #edit box and string table index p' +
+      'er String Table index # edit box'
+    Caption = 'Index Of String'
+    TabOrder = 21
+    OnClick = btnIndexOfStringClick
+  end
 end

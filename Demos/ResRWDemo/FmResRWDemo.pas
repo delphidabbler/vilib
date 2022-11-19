@@ -60,6 +60,7 @@ type
     btnAddOrUpdateString: TButton;
     btnDeleteString: TButton;
     btnSetFFI: TButton;
+    btnIndexOfString: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnViewClick(Sender: TObject);
@@ -77,12 +78,17 @@ type
     procedure btnAddOrUpdateStringClick(Sender: TObject);
     procedure btnDeleteStringClick(Sender: TObject);
     procedure btnSetFFIClick(Sender: TObject);
+    procedure btnIndexOfStringClick(Sender: TObject);
   strict private
     const
       ResFileName = 'TestVI.res';
     var
       fDLL: THandle;
-      fVI: IVerInfoBinary;
+      // Defining fVI as IVerInfoBinary2 instead of IVerInfoBinary so we can use
+      // IVerInfoBinary2.IndexOfString in the
+      // TResRWDemoForm.btnIndexOfStringClick method below. All other methods f
+      // IVerInfoBinary2 ar also in IVerInfoBinary
+      fVI: IVerInfoBinary2;
       fCreateFunc: TVerInfoBinaryCreateFunc;
       fLog: TLogger;
     function ResFilePath: string;
@@ -168,6 +174,24 @@ begin
   var DelIdx: Integer := StrToInt(leTransIdx.Text);
   Check(fVI.DeleteTranslation(DelIdx));
   fLog.Log('### Deleted translation at index %d', [DelIdx]);
+  fLog.Log;
+end;
+
+procedure TResRWDemoForm.btnIndexOfStringClick(Sender: TObject);
+begin
+  var StrTableIdx := StrToInt(leStrTableIdx.Text);
+  var StrName := Trim(leStringName.Text);
+  var Idx: Integer;
+  // NOTE: Here we call the IndexOfString method which is defined in
+  // IVerInfoBinary2, not IVerInfoBinary. We can make a direct call on fVI here
+  // because it has type IVerInfoBinary2. However if fVI had been given type
+  // IVerInfoBinary instead the following call would have to be written as
+  //   (fVI as IVerInfoBinary2).IndexOfString(StrTableIdx, StrName, Idx)
+  Check(fVI.IndexOfString(StrTableIdx, StrName, Idx));
+  fLog.Log(
+    '### Index of string "%s" in string table %d is %d',
+    [StrName, StrTableIdx, Idx]
+  );
   fLog.Log;
 end;
 
@@ -345,6 +369,8 @@ begin
   if not Assigned(fCreateFunc) then
     raise Exception.Create('Can''t load "CreateInstance" function from DLL');
   // now create required 32 bit R/W object
+  // -- this same call to CreateInstance (via fCreateFunc) can be for objects
+  //    that support IVerInfoBinary or, as in this case, IVerInfoBinary2.
   if Failed(fCreateFunc(CLSID_VerInfoBinaryW, fVI)) then
     raise Exception.Create('Can''t instantiate required object in DLL');
 
