@@ -54,6 +54,8 @@ _IVerInfoBinary2_ & _IVerInfoBinaryReader2_ differ from _IVerInfoBinary_ & _IVer
 
 See [Deciding Which CLSID To Use](#deciding-which-clsid-to-use) below for a discussion of which object and which interface to use in what circumstances.
 
+> The file `IntfBinaryVerInfo.pas` is provided with the DLL. It is a Delphi Pascal unit that defines all the supported CLSIDs and interfaces, some supporting data types and the type of _CreateInstance_. Delphi users can add this unit to any project that uses the DLL.
+
 ### Loading the DLL & _CreateInstance_
 
 The DLL can either be loaded statically or dynamically.

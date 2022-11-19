@@ -14,12 +14,13 @@ The Library is distributed in a zip file.
 
 To use the library simply extract the file `VIBinData.dll`, copy it to a suitable directory and call into it from your program. It is recommended that the DLL is placed in the same directory as the program that calls it.
 
-The zip file also contains four Markdown formatted text files:
+The zip file also contains the following files:
 
+* `IntfBinaryVerInfo.pas` - Delphi Pascal source file that defines the interfaces, class IDs and entry point for `VIBinData.dll`. Can
 * `README.md` - this file.
 * `UserGuide.md` - information about how to use the DLL.
 * `CHANGELOG.md` - records changes in each release.
-* `LICENSE.md` - by using the library you are deemed to have agrred to this license.
+* `LICENSE.md` - by using the library you are deemed to have agreed to this license.
 
 ## Documentation & Demos
 

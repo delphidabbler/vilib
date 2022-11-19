@@ -47,6 +47,7 @@ set BuildExeRoot=%BuildRoot%\Exe
 set ReleaseDir=%BuildRoot%\release
 set OutFile=%ReleaseDir%\vilib-32bit-%Version%.zip
 set SrcDir=Src
+set ExportDir=%SrcDir%\Exports
 set DocsDir=Docs
 
 :: Set environment variable required in an MSBuild target
@@ -78,6 +79,7 @@ echo Creating zip files
 %ZipRoot%\zip.exe -j -9 %OutFile% LICENSE.md
 %ZipRoot%\zip.exe -j -9 %OutFile% CHANGELOG.md
 %ZipRoot%\zip.exe -j -9 %OutFile% %DocsDir%\UserGuide.md
+%ZipRoot%\zip.exe -j -9 %OutFile% %ExportDir%\IntfBinaryVerInfo.pas
 
 echo.
 echo ---------------
