@@ -10,7 +10,7 @@
 * [Using the Objects](#using-the-objects)
     * [Return Values & Calling Conventions](#return-values--calling-conventions)
     * [_IVerInfoBinaryReader_ / _IVerInfoBinaryReader2_ Methods](#iverinfobinaryreader--iverinfobinaryreader2-methods)
-    * [_IVerInfoBinary_ / _IVerInfoBinary2_ Methods](#iverinfobinary--iverinfobinary2-methods-methods)
+    * [_IVerInfoBinary_ / _IVerInfoBinary2_ Methods](#iverinfobinary--iverinfobinary2-methods)
 * [Accessing Binary Version Information](#accessing-binary-version-information)
     * [Reading Version Information from a 32/64 Bit Executable](#reading-version-information-from-a-3264-bit-executable)
     * [Reading & Writing Version Information In 32 Bit Resource Files](#reading--writing-version-information-in-32-bit-resource-files)

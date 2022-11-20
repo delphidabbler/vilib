@@ -4,7 +4,7 @@
 
 * [Introduction](#introduction)
 * [Compiling and Configuration](#compiling-and-configuration)
-* [Using `ResWDemo`](#using-resrwdemo)
+* [Using `ResRWDemo`](#using-resrwdemo)
     * [Use the source code](#use-the-source-code)
     * [How to view the state of the version information object](#how-to-view-the-state-of-the-version-information-object)
     * [Create the resource file](#create-the-resource-file)
