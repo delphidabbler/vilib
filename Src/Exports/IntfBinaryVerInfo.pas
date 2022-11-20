@@ -1,49 +1,14 @@
-{ ##
-  @FILE                     IntfBinaryVerInfo.pas
-  @COMMENTS                 Provides interface to binary version information
-                            reader and writer objects exported from the DLL
-                            along with all the supporting types required and a
-                            prototype for the DLL's exported function.
-  @PROJECT_NAME             Binary Version Information Manipulator Library
-  @PROJECT_DESC             Enables binary version information data to be read
-                            from and written to streams and to be updated.
-  @DEPENDENCIES             None.
-  @HISTORY(
-    @REVISION(
-      @VERSION              1.0
-      @DATE                 04/08/2002
-      @COMMENTS             Original version.
-    )
-  )
-}
-
-
 {
- * ***** BEGIN LICENSE BLOCK *****
- * 
- * Version: MPL 1.1
- * 
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with the
- * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
- * 
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.
- * 
- * The Original Code is IntfBinaryVerInfo.pas
- * 
- * The Initial Developer of the Original Code is Peter Johnson
- * (http://www.delphidabbler.com/).
- * 
- * Portions created by the Initial Developer are Copyright (C) 2002 Peter
- * Johnson. All Rights Reserved.
- * 
- * Contributor(s):
- * 
- * ***** END LICENSE BLOCK *****
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2002-2022, Peter Johnson (https://gravatar.com/delphidabbler).
+ *
+ * Provides interfaces for binary version information reader and writer objects
+ * exported from the DLL along with all the supporting types required and a
+ * prototype for the DLL's exported function.
 }
-
 
 unit IntfBinaryVerInfo;
 
@@ -201,6 +166,20 @@ type
   end;
 
   {
+  IVerInfoBinaryReader2:
+    Extension of IVerInfoBinaryReader tthat ads new IndexOfString method.
+
+    Inheritance: IVerInfoBinaryReader2 -> IVerInfoBinaryReader -> [IUnknown]
+  }
+  IVerInfoBinaryReader2 = interface(IVerInfoBinaryReader)
+    ['{D94AC867-16FE-45CA-92AA-A1B690EF38D5}']
+    function IndexOfString(TableIdx: Integer; const Name: WideString;
+      out Index: Integer): HResult; stdcall;
+      {Sets Index to the index of the string with the given name in the string
+      table with the given TableIdx, or -1 if no such string exists}
+  end;
+
+  {
   IVerInfoBinary:
     Interface that enables access to and modification of binary version
     information data. It supports all the methods of IVerInfoBinaryReader plus
@@ -285,6 +264,20 @@ type
     // Additional general methods
     function WriteToStream(const Stm: IStream): HResult; stdcall;
       {Writes the binary version information to the given stream}
+  end;
+
+  {
+  IVerInfoBinary2:
+    Extension of IVerInfoBinary tthat ads new IndexOfString method.
+
+    Inheritance: IVerInfoBinary2 -> IVerInfoBinary -> [IUnknown]
+  }
+  IVerInfoBinary2 = interface(IVerInfoBinary)
+    ['{0068F5D1-7338-494C-8226-0A3A1081F513}']
+    function IndexOfString(TableIdx: Integer; const Name: WideString;
+      out Index: Integer): HResult; stdcall;
+      {Sets Index to the index of the string with the given name in the string
+      table with the given TableIdx, or -1 if no such string exists}
   end;
 
   {

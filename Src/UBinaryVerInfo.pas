@@ -1,63 +1,14 @@
-{ ##
-  @FILE                     UBinaryVerInfo.pas
-  @COMMENTS                 Provides definition of class implementing of
-                            IVerInfoBinary and IVerInfoBinaryReader interfaces
-                            that are exported from DLL. Also exports function
-                            used to create objects supported by the DLL.
-  @PROJECT_NAME             Binary Version Information Manipulator Library
-  @PROJECT_DESC             Enables binary version information data to be read
-                            from and written to streams and to be updated.
-  @DEPENDENCIES             None.
-  @HISTORY(
-    @REVISION(
-      @VERSION              1.0
-      @DATE                 04/08/2002
-      @COMMENTS             Original version.
-    )
-    @REVISION(
-      @VERSION              1.1
-      @DATE                 22/06/2003
-      @COMMENTS             Fixed bug in TVerInfoBinary.AddStringTable where a
-                            spurious call to QueryInterface was prematurely
-                            freeing the object, causing access violation when
-                            an attempt was made to add a string table.
-    )
-    @REVISION(
-      @VERSION              1.2
-      @DATE                 19/10/2004
-      @COMMENTS             Fixed error in error message resource string that
-                            was causing exception in Format procedure.
-    )
-  )
-}
-
-
 {
- * ***** BEGIN LICENSE BLOCK *****
- * 
- * Version: MPL 1.1
- * 
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with the
- * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.
- * 
- * The Original Code is UBinaryVerInfo.pas
+ * Copyright (C) 2002-2022, Peter Johnson (https://gravatar.com/delphidabbler).
  *
- * The Initial Developer of the Original Code is Peter Johnson
- * (http://www.delphidabbler.com/).
- * 
- * Portions created by the Initial Developer are Copyright (C) 2002-2004 Peter
- * Johnson. All Rights Reserved.
- * 
- * Contributor(s):
- * 
- * ***** END LICENSE BLOCK *****
+ * Class implementing of IVerInfoBinary and IVerInfoBinaryReader interfaces that
+ * are exported from the DLL. Also defines a function used to create objects
+ * that are supported by the DLL.
 }
-
 
 unit UBinaryVerInfo;
 
@@ -87,35 +38,22 @@ type
   TVerInfoBinary = class;
 
   {
-  IVerInfoBinaryPvt:
-    Interface used to allow access to reference to implementing object instance.
-
-    Inheritance: IVerInfoBinaryPvt -> [IUnknown]
-  }
-  IVerInfoBinaryPvt = interface(IUnknown)
-    ['{B92AB0E8-E7B5-4C54-AFA8-B049BB14EF4A}']
-    function GetSelf: TVerInfoBinary;
-      {Returns object's Self pointer}
-  end;
-
-  {
   TVerInfoBinary:
-    Class that implements the IVerInfoBinary and IVerInfoBinaryReader interface
-    exported from the DLL.
+    Class that implements the v1 & v2 of the IVerInfoBinary and
+    IVerInfoBinaryReader interfaces exported from the DLL.
 
     Inheritance: TVerInfoBinary -> [TInterfacedObject] -> [TObject]
   }
   TVerInfoBinary = class(TInterfacedObject,
-    IUnknown, IVerInfoBinaryReader, IVerInfoBinary, IVerInfoBinaryPvt)
+    IUnknown,
+    IVerInfoBinaryReader, IVerInfoBinaryReader2,
+    IVerInfoBinary, IVerInfoBinary2)
   private
     fVIData: TVerInfoData;
       {Version information data object used to access and manipulate the binary
       data}
     fLastError: WideString;
       {The last error message}
-    procedure Error(const FmtStr: string; const Args: array of const);
-      {Raises an EVerInfoBinary exception with a message made up from the given
-      format string and argumements}
     function Success: HResult;
       {Sets a successful result: returns S_OK and clears the last error message}
     function HandleException(const E: Exception): HResult;
@@ -255,6 +193,10 @@ type
       table which has the given table index. It is an error if no string item
       with the given name exists in the string table or the string table index
       is out of bounds}
+    function IndexOfString(TableIdx: Integer; const Name: WideString;
+      out Index: Integer): HResult; stdcall;
+      {Sets Index to the index of the string with the given name in the string
+      table with the given TableIdx, or -1 if no such string exists}
     function Clear: HResult; stdcall;
       {Clears the version information data}
     function Assign(const Source: IVerInfoBinaryReader): HResult; stdcall;
@@ -266,9 +208,6 @@ type
     function LastErrorMsg: WideString; stdcall;
       {Returns error message generated from last operation, or '' if last
       operation was a success}
-    { IVerInfoBinaryPvt }
-    function GetSelf: TVerInfoBinary;
-      {Returns object's Self pointer}
   public
     constructor Create(VerResType: TVerResType);
       {Class constructor: creates a new version information data object that
@@ -276,14 +215,6 @@ type
     destructor Destroy; override;
       {Class destructor: frees owned version info data object}
   end;
-
-  {
-  EVerInfoBinary:
-    Private class of exception raised by TVerInfoBinary.
-
-    Inheritance: EVerInfoBinary -> [Exception] -> [TObject]
-  }
-  EVerInfoBinary = class(Exception);
 
   {
   TFixedFileInfoAccessor:
@@ -297,11 +228,6 @@ type
       1: (Elements: TFixedFileInfoArray);   // array of fixed file info
       2: (Orig: TVSFixedFileInfo);          // standard record
   end;
-
-resourcestring
-  // Error messages
-  sBadStrName = 'There is no string named "%0:s" in translation %1:d';
-
 
 function CreateInstance(const CLSID: TGUID; out Obj): HResult; stdcall;
   {If the library supports the object CLSID then an instance of the required
@@ -386,10 +312,18 @@ function TVerInfoBinary.AddStringTableByCode(
   {Adds a new string table indentified by the given translation code. NewIndex
   is set to the index of the new string table or -1 if an error occurs}
 begin
-  Result := AddStringTable(
-    TransToString(TransCode.LanguageID, TransCode.CharSet),
-    NewIndex
-  );
+  // Set error value of string table index
+  NewIndex := -1;
+  try
+    // Try to add new string table and record its index
+    NewIndex := fVIData.AddStringTableByTrans(
+      TransCode.LanguageID, TransCode.CharSet
+    );
+    Result := Success;
+  except
+    on E: Exception do
+      Result := HandleException(E);
+  end;
 end;
 
 function TVerInfoBinary.AddTranslation(const Value: TTranslationCode;
@@ -414,7 +348,7 @@ function TVerInfoBinary.Assign(const Source: IVerInfoBinaryReader): HResult;
 begin
   try
     // Assign using source's object reference
-    fVIData.Assign((Source as IVerInfoBinaryPvt).GetSelf.fVIData);
+    fVIData.Assign((Source as TVerInfoBinary).fVIData);
     Result := Success;
   except
     on E: Exception do
@@ -463,16 +397,9 @@ function TVerInfoBinary.DeleteStringByName(const TableIdx: Integer;
   which has the given table index. It is an error if no string item with the
   given name exists in the string table or the string table index is out of
   bounds}
-var
-  StrIdx: Integer;  // index of string item with given name in string table
 begin
   try
-    // Get index of string item in table and check it exists
-    StrIdx := fVIData.IndexOfString(TableIdx, Name);
-    if StrIdx = -1 then
-      Error(sBadStrName, [Name, TableIdx]);
-    // Delete the string item
-    fVIData.DeleteString(TableIdx, StrIdx);
+    fVIData.DeleteStringByName(TableIdx, Name);
     Result := Success;
   except
     on E: Exception do
@@ -514,14 +441,6 @@ destructor TVerInfoBinary.Destroy;
 begin
   fVIData.Free;
   inherited;
-end;
-
-procedure TVerInfoBinary.Error(const FmtStr: string;
-  const Args: array of const);
-  {Raises an EVerInfoBinary exception with a message made up from the given
-  format string and argumements}
-begin
-  raise EVerInfoBinary.CreateFmt(FmtStr, Args);
 end;
 
 function TVerInfoBinary.GetFixedFileInfo(
@@ -566,12 +485,6 @@ begin
   Result := GetFixedFileInfoArray(FFIArray);
   // Return the element at the required offset
   Value := FFIArray[Offset];
-end;
-
-function TVerInfoBinary.GetSelf: TVerInfoBinary;
-  {Returns object's Self pointer}
-begin
-  Result := Self;
 end;
 
 function TVerInfoBinary.GetStringCount(const TableIdx: Integer;
@@ -629,22 +542,13 @@ function TVerInfoBinary.GetStringTableTransCode(const Index: Integer;
   out TransCode: TTranslationCode): HResult;
   {Returns the translation code associated with the string table at the given
   index in TransCode. It is an error if the table index is out of bounds}
-
-  // ---------------------------------------------------------------------------
-  function StrToTransCode(const Str: string): TTranslationCode;
-    {Converts a translation string to a translation code}
-  begin
-    Result.LanguageID := StrToInt('$' + Copy(Str, 1, 4));
-    Result.CharSet := StrToInt('$' + Copy(Str, 5, 4));
-  end;
-  // ---------------------------------------------------------------------------
-
 begin
   // Set translation code to 0 in case of error
   TransCode.Code := 0;
   try
-    // Attempt to get the transaltion code
-    TransCode := StrToTransCode(fVIData.GetStringTableTransStr(Index));
+    // Build the translation code from language ID & character set
+    TransCode.LanguageID := fVIData.GetStringTableLanguageID(Index);
+    TransCode.CharSet := fVIData.GetStringTableCharSet(Index);
     Result := Success;
   except
     on E: Exception do
@@ -691,18 +595,11 @@ function TVerInfoBinary.GetStringValueByName(const TableIdx: Integer;
   {Sets Value to the string item with the given name in the string table with
   the given string table index in Value. It is an error if there is no string
   item with the given name in the table or if the table index is out of bounds}
-var
-  StringIdx: Integer; // index of string item with given name in table
 begin
   // Set nul value in case of error
   Value := '';
   try
-    // Get index of string item with given name & check it exists
-    StringIdx := fVIData.IndexOfString(TableIdx, Name);
-    if StringIdx = -1 then
-      Error(sBadStrName, [Name, TableIdx]);
-    // Try to get value of string at required index
-    Value := fVIData.GetStringValue(TableIdx, StringIdx);
+    Value := fVIData.GetStringValueByName(TableIdx, Name);
     Result := Success;
   except
     on E: Exception do
@@ -719,8 +616,8 @@ begin
   Value.Code := 0;
   try
     // Try to set the translation code from the language id and character set
-    Value.LanguageID := fVIData.GetLanguageID(Index);
-    Value.CharSet := fVIData.GetCharSet(Index);
+    Value.LanguageID := fVIData.GetTranslationLanguageID(Index);
+    Value.CharSet := fVIData.GetTranslationCharSet(Index);
     Result := Success;
   except
     on E: Exception do
@@ -769,6 +666,22 @@ begin
   fLastError := E.Message;
 end;
 
+function TVerInfoBinary.IndexOfString(TableIdx: Integer; const Name: WideString;
+  out Index: Integer): HResult;
+  {Sets Index to the index of the string with the given name in the string table
+  with the given TableIdx, or -1 if no such string exists}
+begin
+  // Set index to -1 in case of error
+  Index := -1;
+  try
+    Index := fVIData.IndexOfString(TableIdx, Name);
+    Result := Success;
+  except
+    on E: Exception do
+      Result := HandleException(E);
+  end;
+end;
+
 function TVerInfoBinary.IndexOfStringTable(const TransStr: WideString;
   out Index: Integer): HResult;
   {Sets Index to the index of the the string table identified by the the given
@@ -790,13 +703,17 @@ function TVerInfoBinary.IndexOfStringTableByCode(
   const Code: TTranslationCode; out Index: Integer): HResult;
   {Sets Index to the index of the string table identified by a translation
   string made up from the given translation code, or -1 if no such string table}
-var
-  TransStr: string; // the translation string to look up
 begin
-  // Make translation string from laguage id and code
-  TransStr := TransToString(Code.LanguageID, Code.CharSet);
-  // Find the index of the string table
-  Result := IndexOfStringTable(TransStr, Index);
+  // Set index to -1 in case of error
+  Index := -1;
+  try
+    // Try to get the index
+    Index := fVIData.IndexOfStringTableByTrans(Code.LanguageID, Code.CharSet);
+    Result := Success;
+  except
+    on E: Exception do
+      Result := HandleException(E);
+  end;
 end;
 
 function TVerInfoBinary.IndexOfTranslation(
@@ -891,14 +808,7 @@ begin
   // Set string index to -1 in case of error
   StrIndex := -1;
   try
-    // Find idex of string name (or -1 if no such item)
-    StrIndex := fVIData.IndexOfString(TableIdx, Name);
-    if StrIndex = -1 then
-      // No such string: add it and record index
-      StrIndex := fVIData.AddString(TableIdx, Name, Value)
-    else
-      // String exists: update value
-      fVIData.SetStringValue(TableIdx, StrIndex, Value);
+    StrIndex := fVIData.AddOrUpdateString(TableIdx, Name, Value);
     Result := Success;
   except
     on E: Exception do
@@ -925,16 +835,9 @@ function TVerInfoBinary.SetStringByName(const TableIdx: Integer;
   {Sets the value of the string with the given name in the the string table with
   the given index. It is an error if the string table index is out of range or
   if a string with the given name does not exist}
-var
-  StrIdx: Integer;  // index of string in string table
 begin
   try
-    // Get index of string with given name: ensure it exists
-    StrIdx := fVIData.IndexOfString(TableIdx, Name);
-    if StrIdx = -1 then
-      Error(sBadStrName, [Name, TableIdx]);
-    // Set the string value
-    fVIData.SetStringValue(TableIdx, StrIdx, Value);
+    fVIData.SetStringValueByName(TableIdx, Name, Value);
     Result := Success;
   except
     on E: Exception do

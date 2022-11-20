@@ -1,55 +1,13 @@
-{ ##
-  @FILE                     UVerInfoData.pas
-  @COMMENTS                 Defines a class that encapsulates the binary
-                            representation of version information and exposes
-                            properties and methods that permit this data to be
-                            read and modified.
-  @PROJECT_NAME             Binary Version Information Manipulator Library.
-  @PROJECT_DESC             Enables binary version information data to be read
-                            from and written to streams and to be updated.
-  @DEPENDENCIES             None.
-  @HISTORY(
-    @REVISION(
-      @VERSION              1.0
-      @DATE                 04/08/2002
-      @COMMENTS             Original version.
-    )
-    @REVISION(
-      @VERSION              1.1
-      @DATE                 22//06/2003
-      @COMMENTS             Now ensures that root nodes are named
-                            'VS_VERSION_INFO'.
-    )
-  )
-}
-
-
 {
- * ***** BEGIN LICENSE BLOCK *****
- * 
- * Version: MPL 1.1
- * 
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with the
- * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
- * 
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.
- * 
- * The Original Code is UVerInfoData.pas
- * 
- * The Initial Developer of the Original Code is Peter Johnson
- * (http://www.delphidabbler.com/).
- * 
- * Portions created by the Initial Developer are Copyright (C) 2002-2003 Peter
- * Johnson. All Rights Reserved.
- * 
- * Contributor(s):
- * 
- * ***** END LICENSE BLOCK *****
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2002-2022, Peter Johnson (https://gravatar.com/delphidabbler).
+ *
+ * Class that encapsulates the binary representation of version information and
+ * exposes properties and methods that permit this data to be read and modified.
 }
-
 
 unit UVerInfoData;
 
@@ -90,7 +48,7 @@ type
         wLength       // length of structure inc children (Word)
         wValueLength  // size of TVSFixedFileInfo record (Word)
         wType         // 0 - binary (Word: 32 bit records only)
-        szKey         // 'VS_VERSION_INFO' (WideString: 32 bit, String: 16 bit)
+        szKey         // 'VS_VERSION_INFO' (WideStr: 32 bit, AnsiStr: 16 bit)
         pad1          // padding to DWORD boundary
         value         // fixed file information (TVSFixedFileInfo)
         pad2          // padding to DWORD boundary
@@ -101,7 +59,7 @@ type
         wLength       // length of structure inc children (Word)
         wValueLength  // 0 - there is no value (Word)
         wType         // 0 - binary (Word: 32 bit records only)
-        szKey         // 'VarFileInfo' (WideString: 32 bit, String: 16 bit)
+        szKey         // 'VarFileInfo' (WideStr: 32 bit, AnsiStr: 16 bit)
         pad1          // padding to DWORD boundary
         children      // array of Var records (usually just one)
       end;
@@ -110,7 +68,7 @@ type
         wLength       // length of structure inc children (Word)
         wValueLength  // length of list of translation ids (Word)
         wType         // 0 - binary (Word: 32 bit records only)
-        szKey         // 'Translation' (WideString: 32 bit, String: 16 bit)
+        szKey         // 'Translation' (WideStr: 32 bit, AnsiStr: 16 bit)
         pad1          // padding to DWORD boundary
         value         // list of translation ids (array of DWORD)
       end;
@@ -119,7 +77,7 @@ type
         wLength       // length of structure inc children (Word)
         wValueLength  // 0 - no value (Word)
         wType         // 0 - binary (Word: 32 bit records only)
-        szKey         // 'StringFileInfo' (WideString: 32 bit, String: 16 bit)
+        szKey         // 'StringFileInfo' (WideStr: 32 bit, AnsiStr: 16 bit)
         pad1          // padding to DWORD boundary
         children      // array of StringTable records
       end;
@@ -128,7 +86,7 @@ type
         wLength       // length of structure inc children (Word)
         wValueLength  // 0 - no value (Word)
         wType         // 0 - binary (Word: 32 bit records only)
-        szKey         // translation code (WideString: 32 bit, String: 16 bit)
+        szKey         // translation code (WideStr: 32 bit, AnsiStr: 16 bit)
         pad1          // padding to DWORD boundary
         children      // array of string records
       end;
@@ -137,7 +95,7 @@ type
         wLength       // length of structure inc children (Word)
         wValueLength  // length of string value (Word)
         wType         // 1 - text (Word: 32 bit records only)
-        szKey         // name of string (WideString: 32 bit, String: 16 bit)
+        szKey         // name of string (WideStr: 32 bit, AnsiStr: 16 bit)
         pad1          // padding to DWORD boundary
         value         // string's value
       end;
@@ -195,6 +153,22 @@ type
       const Name: string): TVerInfoRec;
       {Creates a new node (record) of required type (16 or 32 bit) with the
       given name as a child of the given owner record}
+    class procedure DecodeTrans(const Trans: DWORD;
+      out Language, CharSet: WORD);
+      {Decodes the translation encoded in Trans into its language and character
+      set components.}
+    class procedure DecodeTransStr(const TransStr: string;
+      out Language, CharSet: WORD);
+      {Decodes the translation encoded in translation string TransStr into its
+      language and character set components}
+    class function EncodeTrans(const OldTrans: DWORD;
+      const Language, CharSet: WORD): DWORD;
+      {Updates the given translation code OldTrans with the either or both of
+      the given language and character set codes. If either of these codes are
+      $FFFF they are ignored}
+    class procedure StampFFI(var FFI: TVSFixedFileInfo);
+      {Ensures that given fixed file info structure has correct version (1.0)
+      and signature}
   public
     // General methods
     constructor Create(VerResType: TVerResType);
@@ -228,10 +202,10 @@ type
     // Variable info methods
     function GetTranslationCount: Integer;
       {Returns number of translations in the version information}
-    function GetLanguageID(TransIdx: Integer): Word;
+    function GetTranslationLanguageID(TransIdx: Integer): Word;
       {Returns the language id of the translation at the given index: exception
       if index is out of range}
-    function GetCharSet(TransIdx: Integer): Word;
+    function GetTranslationCharSet(TransIdx: Integer): Word;
       {Returns the character set of the translation at the given index:
       exception if index is out of range}
     function GetTranslationString(TransIdx: Integer): string;
@@ -256,15 +230,29 @@ type
     function GetStringTableTransStr(TableIdx: Integer): string;
       {Returns the translation code string that identifies the string table at
       the given index: exception if the index is out of range}
+    function GetStringTableLanguageID(TableIdx: Integer): Word;
+      {Returns the language ID encoded in the translation code string that
+      identifies the string table at the given index. Exception raised if
+      TableIdx is out of range}
+    function GetStringTableCharSet(TableIdx: Integer): Word;
+      {Returns the character set code encoded in the translation code string
+      that identifies the string table at the given index. Exception raised if
+      TableIdx is out of range}
     function AddStringTable(TransStr: string): Integer;
       {Adds a new string table indentified by the given translation code string
       and returns the index of the new entry}
+    function AddStringTableByTrans(LanguageID, CharSet: Word): Integer;
+      {Adds a new string table indentified by the given language ID and
+      character set and returns index of the new entry}
     procedure DeleteStringTable(TableIdx: Integer);
       {Deletes the string table at the given index: exception if index is out of
       bounds}
     function IndexOfStringTable(const TransStr: string): Integer;
       {Returns the index of the string table identified by the given translation
       code string, or -1 if there is no such table}
+    function IndexOfStringTableByTrans(LanguageID, CharSet: Word): Integer;
+      {Returns the index of the string table identified by the given language ID
+      and character set, or -1 if there is no such table}
     // String information methods
     function GetStringCount(TableIdx: Integer): Integer;
       {Returns the number of string information items in the string table with
@@ -277,6 +265,10 @@ type
       {Returns the name of the string information item at the given index in the
       string table with the given table index: exception if either index is out
       of bounds}
+    function GetStringValueByName(TableIdx: Integer; Name: string): string;
+      {Returns the value of the string information item with the given name in
+      the string table with the given index. Exception raised if table index is
+      invalid if string with given name doesn't exist}
     function IndexOfString(TableIdx: Integer; const Name: string): Integer;
       {Returns the index of the the string info item with the given name in the
       string table at the given index: exception if string table index is out of
@@ -286,13 +278,31 @@ type
       index and returns new string item's index in string table. Exceptions are
       raised if string table index is out of bounds or if a string item with
       given name already exists in table}
+    function AddOrUpdateString(TableIdx: Integer; const Name, Value: string):
+      Integer;
+      {If a string with given Name is already in the string table at TableIndex,
+      the string's value is updated to given Value, otherwise a new string with
+      given Name and Value is added to the string table. In either case the
+      index of the string in the table is returned}
     procedure SetStringValue(TableIdx, StringIdx: Integer;
       const Value: string);
       {Sets the string item at the given index in the string table at the given
       table index to the given value: exception if either index is out of bounds}
+    procedure SetStringValueByName(TableIdx: Integer;
+      const Name, Value: string);
+      {Sets the string item with the given name in the string table at the given
+      table index to the given value. An exception is raised if either the table
+      index is out of bounds or if Name doesn't exist in the string table}
     procedure DeleteString(TableIdx, StringIdx: Integer);
       {Delete the string info item at the given index in the string table at the
       given table index: exception if either index is out of bounds}
+    procedure DeleteStringByName(TableIdx: Integer; Name: string);
+      {Delete the string info item with the given name from the string table
+      with the given index. Exception raised if Name does not exist}
+    // Helper method
+    class function TransToString(const Language, CharSet: WORD): string;
+      {Returns a string representation of the translation identified by the
+      given language and character set codes}
   end;
 
   {
@@ -304,12 +314,6 @@ type
   EVerInfoData = class(Exception);
 
 
-{ Helper routines }
-
-function TransToString(const Language, CharSet: WORD): string;
-  {Returns a string representation of the translation identified by the given
-  language and character set codes}
-
 implementation
 
 resourcestring
@@ -319,53 +323,13 @@ resourcestring
   sStrTableIndexOutOfBounds = 'String table index %0:d is out of bounds';
   sStrItemExists = 'String item in table %0:d with name "%1:s" already exists';
   sTransIndexOutOfBounds = 'Translation index %0:d is out of bounds';
+  sBadStrName = 'There is no string named "%0:s" in table %1:d';
 
 const
   // Version info data record names
   cVarFileInfo = 'VarFileInfo';
   cTranslation = 'Translation';
   cStringFileInfo = 'StringFileInfo';
-
-{ Helper routines }
-
-function TransToString(const Language, CharSet: WORD): string;
-  {Returns a string representation of the translation identified by the given
-  language and character set codes}
-begin
-  Result := IntToHex(Language, 4) + IntToHex(CharSet, 4);
-end;
-
-procedure DecodeTrans(const Trans: DWORD; out Language, CharSet: WORD);
-  {Decodes the translation encoded in Trans into its langauge and character set
-  components. If WORD(Nil^) is passed for either Language or CharSet then the
-  value is not returned}
-begin
-  if Assigned(@Language) then
-    Language := LoWord(Trans);
-  if Assigned(@CharSet) then
-    CharSet := HiWord(Trans);
-end;
-
-function EncodeTrans(const OldTrans: DWORD;
-  const Language, CharSet: WORD): DWORD;
-  {Updates the given translation code OldTrans with the either or both of the
-  given lanaguage and character set codes. If either of these codes are $FFFF
-  they are ignored}
-begin
-  Result := OldTrans;
-  if Language <> $FFFF then
-    LongRec(Result).Lo := Language;
-  if CharSet <> $FFFF then
-    LongRec(Result).Hi := CharSet;
-end;
-
-procedure StampFFI(var FFI: TVSFixedFileInfo);
-  {Ensures that given fixed file info structure has correct version (1.0) and
-  signature}
-begin
-  FFI.dwSignature := $FEEF04BD;
-  FFI.dwStrucVersion := $00010000;
-end;
 
 type
   {
@@ -376,6 +340,22 @@ type
 
 
 { TVerInfoData }
+
+function TVerInfoData.AddOrUpdateString(TableIdx: Integer; const Name,
+  Value: string): Integer;
+  {If a string with given Name is already in the string table at TableIndex, the
+  string's value is updated to given Value, otherwise a new string with given
+  Name and Value is added to the string table. In either case the index of the
+  string in the table is returned}
+begin
+  Result := IndexOfString(TableIdx, Name);
+  if Result = -1 then
+    // No such string: add it and record index
+    Result := AddString(TableIdx, Name, Value)
+  else
+    // String exists: update value
+    SetStringValue(TableIdx, Result, Value);
+end;
 
 function TVerInfoData.AddString(TableIdx: Integer; const Name,
   Value: string): Integer;
@@ -410,6 +390,13 @@ begin
   // Add a new string table entry under the 'StringFileInfo' record named with
   // given translation string
   CreateNode(GetStringFileInfoRoot, TransStr);
+end;
+
+function TVerInfoData.AddStringTableByTrans(LanguageID, CharSet: Word): Integer;
+  {Adds a new string table indentified by the given language ID and character
+  set and returns index of the new entry}
+begin
+  Result := AddStringTable(TransToString(LanguageID, CharSet));
 end;
 
 function TVerInfoData.AddTranslation(LanguageID, CharSet: Word): Integer;
@@ -461,8 +448,8 @@ begin
   // Add translations to match those in source object
   for SrcTransIdx := 0 to Pred(Source.GetTranslationCount) do
     Self.AddTranslation(
-      Source.GetLanguageID(SrcTransIdx),
-      Source.GetCharSet(SrcTransIdx)
+      Source.GetTranslationLanguageID(SrcTransIdx),
+      Source.GetTranslationCharSet(SrcTransIdx)
     );
   // Add string tables and string entries to match those in source object
   for SrcStrTableIdx := 0 to Pred(Source.GetStringTableCount) do
@@ -506,6 +493,24 @@ begin
   Result.Name := Name;
 end;
 
+class procedure TVerInfoData.DecodeTrans(const Trans: DWORD; out Language,
+  CharSet: WORD);
+  {Decodes the translation encoded in Trans into its language and character set
+  components.}
+begin
+  Language := LoWord(Trans);
+  CharSet := HiWord(Trans);
+end;
+
+class procedure TVerInfoData.DecodeTransStr(const TransStr: string;
+  out Language, CharSet: WORD);
+  {Decodes the translation encoded in translation string TransStr into its
+  language and character set components}
+begin
+  Language := LongRec(StrToUInt('$' + Copy(TransStr, 1, 4))).Lo;
+  CharSet := LongRec(StrToUInt('$' + Copy(TransStr, 5, 4))).Lo;
+end;
+
 procedure TVerInfoData.DeleteString(TableIdx, StringIdx: Integer);
   {Delete the string info item at the given index in the string table at the
   given table index: exception if either index is out of bounds}
@@ -517,6 +522,16 @@ begin
   Assert(Assigned(StrRec));
   // Freeing string item unlinks from string table's list
   StrRec.Free;
+end;
+
+procedure TVerInfoData.DeleteStringByName(TableIdx: Integer; Name: string);
+  {Delete the string info item with the given name from the string table with
+  the given index. Exception raised if Name does not exist}
+begin
+  var StrIdx := IndexOfString(TableIdx, Name);
+  if StrIdx = -1 then
+    Error(sBadStrName, [Name, TableIdx]);
+  DeleteString(TableIdx, StrIdx);
 end;
 
 procedure TVerInfoData.DeleteStringTable(TableIdx: Integer);
@@ -572,6 +587,19 @@ destructor TVerInfoData.Destroy;
 begin
   fVIRoot.Free;
   inherited;
+end;
+
+class function TVerInfoData.EncodeTrans(const OldTrans: DWORD; const Language,
+  CharSet: WORD): DWORD;
+  {Updates the given translation code OldTrans with the either or both of the
+  given language and character set codes. If either of these codes are $FFFF
+  they are ignored}
+begin
+  Result := OldTrans;
+  if Language <> $FFFF then
+    LongRec(Result).Lo := Language;
+  if CharSet <> $FFFF then
+    LongRec(Result).Hi := CharSet;
 end;
 
 procedure TVerInfoData.EnsureRequiredNodes;
@@ -630,14 +658,6 @@ begin
     Result := nil;
 end;
 
-function TVerInfoData.GetCharSet(TransIdx: Integer): Word;
-  {Returns the character set of the translation at the given index: exception if
-  index is out of range}
-begin
-  // Decode the translation value at given index to get just the char set
-  DecodeTrans(InternalGetTranslation(TransIdx), Word(nil^), Result);
-end;
-
 function TVerInfoData.GetFixedFileInfo: TVSFixedFileInfo;
   {Returns the version information's fixed file information record}
 var
@@ -655,14 +675,6 @@ begin
   else
     // copy date from record into result
     Result := Ptr^;
-end;
-
-function TVerInfoData.GetLanguageID(TransIdx: Integer): Word;
-  {Returns the language id of the translation at the given index: exception if
-  index is out of range}
-begin
-  // Decode the translation value at index  to get just the language id
-  DecodeTrans(InternalGetTranslation(TransIdx), Result, Word(nil^));
 end;
 
 function TVerInfoData.GetStringCount(TableIdx: Integer): Integer;
@@ -735,6 +747,16 @@ begin
   Result := StrRec.Name
 end;
 
+function TVerInfoData.GetStringTableCharSet(TableIdx: Integer): Word;
+  {Returns the character set code encoded in the translation code string that
+  identifies the string table at the given index. Exception raised if TableIdx
+  is out of range}
+var
+  Dummy: Word;
+begin
+  DecodeTransStr(GetStringTableTransStr(TableIdx), Dummy, Result);
+end;
+
 function TVerInfoData.GetStringTableCount: Integer;
   {Returns the number of string tables in the version information}
 var
@@ -744,6 +766,16 @@ begin
   StrRoot := GetStringFileInfoRoot;
   Assert(Assigned(StrRoot));
   Result := StrRoot.NumChildren;
+end;
+
+function TVerInfoData.GetStringTableLanguageID(TableIdx: Integer): Word;
+  {Returns the language ID encoded in the translation code string that
+  identifies the string table at the given index. Exception raised if TableIdx
+  is out of range}
+var
+  Dummy: Word;
+begin
+  DecodeTransStr(GetStringTableTransStr(TableIdx), Result, Dummy);
 end;
 
 function TVerInfoData.GetStringTableTransStr(TableIdx: Integer): string;
@@ -773,11 +805,43 @@ begin
   Result := StrRec.GetStringValue;
 end;
 
+function TVerInfoData.GetStringValueByName(TableIdx: Integer;
+  Name: string): string;
+  {Returns the value of the string information item with the given name in the
+  string table with the given index. Exception raised if table index is invalid
+  if string with given name doesn't exist}
+begin
+  var StringIdx := IndexOfString(TableIdx, Name);
+  if StringIdx = -1 then
+    Error(sBadStrName, [Name, TableIdx]);
+  Result := GetStringValue(TableIdx, StringIdx);
+end;
+
+function TVerInfoData.GetTranslationCharSet(TransIdx: Integer): Word;
+  {Returns the character set of the translation at the given index: exception if
+  index is out of range}
+var
+  Dummy: Word;
+begin
+  // Decode the translation value at given index to get just the char set
+  DecodeTrans(InternalGetTranslation(TransIdx), Dummy, Result);
+end;
+
 function TVerInfoData.GetTranslationCount: Integer;
   {Returns number of translations in the version information}
 begin
   // Get count of translation from translation record (which must exist)
   Result := InternalGetTranslationCount(GetTranslationRec);
+end;
+
+function TVerInfoData.GetTranslationLanguageID(TransIdx: Integer): Word;
+  {Returns the language id of the translation at the given index: exception if
+  index is out of range}
+  var
+    Dummy: Word;
+begin
+  // Decode the translation value at index  to get just the language id
+  DecodeTrans(InternalGetTranslation(TransIdx), Result, Dummy);
 end;
 
 function TVerInfoData.GetTranslationRec: TVerInfoRec;
@@ -862,6 +926,14 @@ begin
   Assert(Assigned(StrRoot));
   // Find index (if any) of child record with given name
   Result := IndexOfChildByName(StrRoot, TransStr)
+end;
+
+function TVerInfoData.IndexOfStringTableByTrans(LanguageID,
+  CharSet: Word): Integer;
+  {Returns the index of the string table identified by the given language ID
+  and character set, or -1 if there is no such table}
+begin
+  Result := IndexOfStringTable(TransToString(LanguageID, CharSet));
 end;
 
 function TVerInfoData.IndexOfTranslation(LanguageID,
@@ -994,12 +1066,41 @@ begin
   StrRec.SetStringValue(Value);
 end;
 
+procedure TVerInfoData.SetStringValueByName(TableIdx: Integer; const Name,
+  Value: string);
+  {Sets the string item with the given name in the string table at the given
+  table index to the given value. An exception is raised if either the table
+  index is out of bounds or if Name doesn't exist in the string table}
+begin
+  var StrIdx := IndexOfString(TableIdx, Name);
+  if StrIdx = -1 then
+    Error(sBadStrName, [Name, TableIdx]);
+  // Set the string value
+  SetStringValue(TableIdx, StrIdx, Value);
+end;
+
 procedure TVerInfoData.SetTranslation(TransIdx: Integer; LanguageID,
   CharSet: Word);
   {Sets the translation at the given index to have the given language ID and
   character set. An exception is raised if the index is out of range}
 begin
   InternalSetTranslation(TransIdx, EncodeTrans(0, LanguageID, CharSet));
+end;
+
+class procedure TVerInfoData.StampFFI(var FFI: TVSFixedFileInfo);
+  {Ensures that given fixed file info structure has correct version (1.0) and
+  signature}
+begin
+  FFI.dwSignature := $FEEF04BD;
+  FFI.dwStrucVersion := $00010000;
+end;
+
+class function TVerInfoData.TransToString(const Language,
+  CharSet: WORD): string;
+  {Returns a string representation of the translation identified by the given
+  language and character set codes}
+begin
+  Result := IntToHex(Language, 4) + IntToHex(CharSet, 4);
 end;
 
 function TVerInfoData.VerInfoRecClass: TVerInfoRecClass;
@@ -1023,3 +1124,4 @@ begin
 end;
 
 end.
+

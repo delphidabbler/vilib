@@ -1,48 +1,13 @@
-{ ##
-  @FILE                     UVerInfoBinIO.pas
-  @COMMENTS                 Implements an object used to input from and output
-                            to a wrapped stream: the object provides a
-                            convenient interface to the stream.
-  @PROJECT_NAME             Binary Version Information Manipulator Library.
-  @PROJECT_DESC             Enables binary version information data to be read
-                            from and written to streams and to be updated.
-  @DEPENDENCIES             None.
-  @HISTORY(
-    @REVISION(
-      @VERSION              1.0
-      @DATE                 04/08/2002
-      @COMMENTS             Original version.
-    )
-  )
-}
-
-
 {
- * ***** BEGIN LICENSE BLOCK *****
- * 
- * Version: MPL 1.1
- * 
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with the
- * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
- * 
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.
- * 
- * The Original Code is UVerInfoBinIO.pas
- * 
- * The Initial Developer of the Original Code is Peter Johnson
- * (http://www.delphidabbler.com/).
- * 
- * Portions created by the Initial Developer are Copyright (C) 2002 Peter
- * Johnson. All Rights Reserved.
- * 
- * Contributor(s):
- * 
- * ***** END LICENSE BLOCK *****
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2002-2022, Peter Johnson (https://gravatar.com/delphidabbler).
+ *
+ * Class used to input from and output to a wrapped stream: the class provides a
+ * convenient interface to the stream.
 }
-
 
 unit UVerInfoBinIO;
 
@@ -116,7 +81,7 @@ function TVerInfoBinIO.GetPosition: LongInt;
   {Returns the current position in the stream. Raises exception if position can't
   be read}
 var
-  CurPos: Int64;  // position in stream
+  CurPos: UInt64;  // position in stream
 begin
   // Attempt to get position in stream
   if not Succeeded(fStream.Seek(0, STREAM_SEEK_CUR, CurPos)) then
@@ -158,13 +123,13 @@ function TVerInfoBinIO.Seek(Move, Origin: Integer): LongInt;
   exception if the stream doesn't support the seek operation. The origin is
   specified in same way as when calling IStream.Seek. Returns the new position}
 var
-  NewPos: Int64;  // new position in stream
+  NewPos: UInt64;  // new position in stream
 begin
   // Attempt to seek to required position
   if not Succeeded(fStream.Seek(Move, Origin, NewPos)) then
     raise EStreamError.Create(sCantSeek);
   // Return new position converted to 32 bits
-  Result := NewPos;
+  Result := LongInt(NewPos);
 end;
 
 procedure TVerInfoBinIO.WriteBuffer(const Buffer; Count: Integer);

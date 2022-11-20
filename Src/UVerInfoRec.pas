@@ -1,74 +1,15 @@
-{ ##
-  @FILE                     UVerInfoRec.pas
-  @COMMENTS                 Defines classes that encapsulate general version
-                            information records and exposes properties for the
-                            key record elements. It can also read and write its
-                            data from and to a stream. There are classes for
-                            both 16 and 32 bit version information records.
-  @PROJECT_NAME             Binary Version Information Manipulator Library.
-  @PROJECT_DESC             Enables binary version information data to be read
-                            from and written to streams and to be updated.
-  @DEPENDENCIES             None.
-  @HISTORY(
-    @REVISION(
-      @VERSION              1.0
-      @DATE                 04/08/2002
-      @COMMENTS             Original version.
-    )
-    @REVISION(
-      @VERSION              1.1
-      @DATE                 31/05/2003
-      @COMMENTS             + Modified input method to be able to read wide
-                              string values without using value length from
-                              version info since this can't be relied upon to be
-                              consistent.
-                            + Set DataType to 0 in ANSI ReadHeader method (this
-                              was missing).
-    )
-    @REVISION(
-      @VERSION              1.2
-      @DATE                 17/08/2003
-      @COMMENTS             Modified input method to correct stream position to
-                            deal with version info that has incorrect structure
-                            and invalid wValueLength value. The main changes
-                            were:
-                            + to explicitly set stream position to start of
-                              child records rather than assume correct number
-                              of value bytes are read.
-                            + to explicitly set stream position to end of record
-                              (per wLength value in header rather than relying
-                              on correct number of bytes to be read.
-    )
-  )
-}
-
-
 {
- * ***** BEGIN LICENSE BLOCK *****
- * 
- * Version: MPL 1.1
- * 
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with the
- * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
- * 
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.
- * 
- * The Original Code is UVerInfoRec.pas
- * 
- * The Initial Developer of the Original Code is Peter Johnson
- * (http://www.delphidabbler.com/).
- * 
- * Portions created by the Initial Developer are Copyright (C) 2002-2003 Peter
- * Johnson. All Rights Reserved.
- * 
- * Contributor(s):
- * 
- * ***** END LICENSE BLOCK *****
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2002-2022, Peter Johnson (https://gravatar.com/delphidabbler).
+ *
+ * Classes that encapsulate general version information records and expose
+ * properties for the key record elements. They can also read and write their
+ * data from and to a stream. There are classes for both 16 and 32 bit version
+ * information records.
 }
-
 
 unit UVerInfoRec;
 
@@ -182,6 +123,10 @@ type
       passed back in RecSizePos (the actual value is written later once size
       of record is known). Returns number of bytes written. Descendants must
       implement since header format varies between 16 and 32 bit}
+    function ValuePtrToStr(const ValuePtr: Pointer): string; virtual; abstract;
+      {Converts the text value pointed to by ValuePtr to string. ValuePtr will
+      point to an ANSI string for 16 bit format and WideString for 32 bit
+      format, so descendants must implement}
   public
     constructor Create; overload;
       {Class constructor: create version info record with no parent (i.e. top
@@ -245,6 +190,9 @@ type
       version info structure. The position where the record size is written is
       passed back in RecSizePos (the actual value is written later once size
       of record is known). Returns number of bytes written}
+    function ValuePtrToStr(const ValuePtr: Pointer): string; override;
+      {Converts the text value pointed to by ValuePtr to string. ValuePtr points
+      to an ANSI string}
   public
     procedure SetStringValue(const Str: string); override;
       {Sets value buffer to given string - also sets data type to 0}
@@ -273,6 +221,9 @@ type
       version info structure. The position where the record size is written is
       passed back in RecSizePos (the actual value is written later once size
       of record is known). Returns number of bytes written}
+    function ValuePtrToStr(const ValuePtr: Pointer): string; override;
+      {Converts the text value pointed to by ValuePtr to string. ValuePtr points
+      to a wide string}
   public
     procedure SetStringValue(const Str: string); override;
       {Sets value buffer to given string - also sets data type to 1}
@@ -398,13 +349,7 @@ begin
   // Get pointer to value buffer (has value nil if there is no value buffer)
   ValuePtr := GetValue;
   if Assigned(ValuePtr) then
-  begin
-    // Value buffer exists: read either a string or wide string per data type
-    if fDataType = 0 then
-      Result := PChar(ValuePtr)
-    else
-      Result := WideCharToString(PWideChar(ValuePtr));
-  end
+    Result := ValuePtrToStr(ValuePtr)
   else
     // No value buffer: return empty string
     Result := '';
@@ -447,7 +392,7 @@ function TVerInfoRec.ReadObject(const Reader: TVerInfoBinIO): Integer;
   {Reads the version information record object using the given reader and
   returns the number of bytes read}
 var
-  wLength, wValueLength: WORD;  // length of strucure and Value member
+  wLength, wValueLength: WORD;  // length of structure and Value member
   Child: TVerInfoRec;           // reference to child record objects
   WC: WideChar;                 // wide character read from value string
   WValue: WideString;           // wide string to hold wide string value
@@ -503,6 +448,7 @@ begin
         //   length of string * SizeOf(WideChar) and some even pad with rubbish
         //   characters following end of string #0#0 to the (wrong) size of the
         //   value (e.g. Wise installer files)!!
+        //
         // So we create a wide string of sufficient size to hold value and read
         //   each wide character into it until terminating #0#0 is read. We then
         //   store this string in value buffer. This method (rather than direct
@@ -510,10 +456,19 @@ begin
         //   thereby ensuring that correct value length is written when data is
         //   output, regardless of wValueLength.
         //
-        // create wide string of sufficent size (may be either correct size or
+        // WARNING: Because of this workaround, we can't detect any Children
+        //   following a WideString value. Since we can't rely on wValueLength
+        //   being set correctly, we can't use it to find the offset of a
+        //   Children node. Luckily, the only time wide string values occur is
+        //   in String type nodes and String nodes never have a Children node.
+        //   Unfortunately, although this class is supposed to be general and
+        //   should work without knowledge of the type of the node, we do need
+        //   to assume that any node with wide string will not have children.
+
+        // Create wide string of sufficent size (may be either correct size or
         //   twice size required depending on meaning of wValueLength)
         SetLength(WValue, wValueLength);
-        // read in wide string up to and including terminating #0#0
+        // Read in wide string up to and including terminating #0#0
         // .. initialise index into wide string
         WVIdx := 1;
         repeat
@@ -695,7 +650,7 @@ begin
     Reader.ReadBuffer(KeyChar, SizeOf(AnsiChar));
     Inc(Result, SizeOf(AnsiChar));
     if KeyChar <> #0 then
-      KeyName := KeyName + KeyChar;
+      KeyName := KeyName + WideChar(KeyChar);
   until KeyChar = #0;
   // Skip any padding to DWORD boundary
   Result := Result + ReadPadding(Reader, Result);
@@ -707,12 +662,21 @@ var
   BufLen: Integer;  // required value buffer size
 begin
   // Allocate value buffer of required size
-  BufLen := SizeOf(AnsiChar) * (Length(Str) + 1);
+  var StrA: AnsiString := AnsiString(Str);
+  BufLen := SizeOf(AnsiChar) * (Length(StrA) + 1);
   AllocateValueBuffer(BufLen);
-  // Store given string as a wide string in buffer
-  Move(PChar(Str)^, fValueBuffer^, BufLen);
+  // Store given string as an ANSI string in buffer
+  Move(PAnsiChar(StrA)^, fValueBuffer^, BufLen);
   // Data type is always 0
   SetDataType(0);
+end;
+
+function TVerInfoRecA.ValuePtrToStr(const ValuePtr: Pointer): string;
+  {Converts the text value pointed to by ValuePtr to string. ValuePtr points to
+  an ANSI string}
+begin
+  var Value: AnsiString := PAnsiChar(ValuePtr);
+  Result := UnicodeString(Value);
 end;
 
 function TVerInfoRecA.WriteHeader(const Writer: TVerInfoBinIO;
@@ -735,10 +699,10 @@ begin
   Writer.WriteBuffer(ValueSize, SizeOf(Word));
   // Record number of bytes written
   Result := 2 * SizeOf(Word);
-  // write key as zero term ansi string (assumes ansi char has length 1)
+  // write key as zero termitaed ANSI string
   Assert(SizeOf(AnsiChar) = 1);
-  Key := Name;
-  Writer.WriteBuffer(PChar(Key)^, Length(Key) + 1);
+  Key := AnsiString(Name);
+  Writer.WriteBuffer(PAnsiChar(Key)^, Length(Key) + 1);
   Inc(Result, Length(Key) + 1);
   // pad key out to DWORD boundary
   Result := Result + WritePadding(Writer, Result);
@@ -770,7 +734,7 @@ begin
     Reader.ReadBuffer(KeyChar, SizeOf(WChar));
     Inc(Result, SizeOf(KeyChar));
     if KeyChar <> #0 then
-      KeyName := KeyName + WideCharLenToString(@KeyChar, 1);
+      KeyName := KeyName + KeyChar;
   until KeyChar = #0;
   // Skip any padding to DWORD boundary
   Result := Result + ReadPadding(Reader, Result);
@@ -785,9 +749,17 @@ begin
   BufLen := SizeOf(WideChar) * (Length(Str) + 1);
   AllocateValueBuffer(BufLen);
   // Store given string as a wide string in buffer
-  StringToWideChar(Str, PWideChar(fValueBuffer), Length(Str) + 1);
+  Move(PWideChar(Str)^, fValueBuffer^, BufLen);
   // Data type is 1
   SetDataType(1);
+end;
+
+function TVerInfoRecW.ValuePtrToStr(const ValuePtr: Pointer): string;
+  {Converts the text value pointed to by ValuePtr to string. ValuePtr points to
+  a wide string}
+begin
+  var Value: UnicodeString := PWideChar(ValuePtr);
+  Result := Value;
 end;
 
 function TVerInfoRecW.WriteHeader(const Writer: TVerInfoBinIO;
@@ -824,7 +796,7 @@ begin
   UnicodeBufSize := SizeOf(WideChar) * (Length(Key) + 1);
   GetMem(UnicodeBuf, UnicodeBufSize);
   try
-    StringToWideChar(Key, UnicodeBuf, (Length(Key) + 1));
+    Move(PWideChar(Key)^, UnicodeBuf^, UnicodeBufSize);
     Writer.WriteBuffer(UnicodeBuf^, UnicodeBufSize);
     Inc(Result, UnicodeBufSize);
   finally
@@ -835,3 +807,4 @@ begin
 end;
 
 end.
+

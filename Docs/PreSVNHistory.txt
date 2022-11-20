@@ -1,0 +1,209 @@
+================================================================================
+
+Version Information Manipulator Library (vilib)
+
+Historical update information from v1.0.0 to v1.0.5.
+
+================================================================================
+
+This file records known changes to files and releases of vilib from the first
+release of the project (v1.0.0) until it was placed under version control with
+Subversion on 17 November 2009.
+
+There are two sections in this document:
+
+  1 Files: Lists all source code and development tools and provides details of
+    changes to these files that preceded version control.
+
+  2 Releases: Lists all the releases of vilib and notes which file revisions
+    were included in each release. For a summary of the changes across different
+    versions of the project see CHANGELOG.md.
+
+
+================================================================================
+FILES
+================================================================================
+
+This section lists all files for which update history is known for vilib between
+v1.0.0 to v1.0.5.
+
+--------------------------------------------------------------------------------
+DevTools/BuildAll.bat
+--------------------------------------------------------------------------------
+v1.0 of 23 Aug 2007  - Original version.
+        17 Nov 2009  - MOVED TO SVN.
+
+--------------------------------------------------------------------------------
+DevTools/BuildPascal.bat
+--------------------------------------------------------------------------------
+v1.0 of 23 Aug 2007  - Original version.
+        17 Nov 2009  - MOVED TO SVN.
+
+--------------------------------------------------------------------------------
+DevTools/BuildResources.bat
+--------------------------------------------------------------------------------
+v1.0 of 23 Aug 2007  - Original version.
+        17 Nov 2009  - MOVED TO SVN.
+
+--------------------------------------------------------------------------------
+DevTools/ReleaseExe.bat
+--------------------------------------------------------------------------------
+v1.0 of 26 Aug 2007  - Original version.
+        17 Nov 2009  - MOVED TO SVN.
+
+--------------------------------------------------------------------------------
+DevTools/ReleaseSrc.bat
+--------------------------------------------------------------------------------
+v1.0 of 26 Aug 2007  - Original version.
+        17 Nov 2009  - MOVED TO SVN.
+
+--------------------------------------------------------------------------------
+DevTools/Tidy.bat
+--------------------------------------------------------------------------------
+v1.0 of 22 Aug 2007  - Original version.
+        17 Nov 2009  - MOVED TO SVN.
+
+--------------------------------------------------------------------------------
+Src/Build.bat
+--------------------------------------------------------------------------------
+v1.0 of 22 Aug 2007  - Original version.
+        17 Nov 2009  - MOVED TO SVN.
+
+--------------------------------------------------------------------------------
+Src/UBinaryVerInfo.pas
+--------------------------------------------------------------------------------
+v1.0 of 04 Aug 2002  - Original version.
+v1.1 of 22 Jun 2003  - Fixed bug in TVerInfoBinary.AddStringTable where a
+                       spurious call to QueryInterface was prematurely freeing
+                       the object, causing access violation when an attempt was
+                       made to add a string table.
+v1.2 of 19 Oct 2004  - Fixed error in error message resource string that was
+                       causing exception in Format procedure.
+        17 Nov 2009  - MOVED TO SVN.
+
+--------------------------------------------------------------------------------
+Src/UVerInfoBinIO.pas
+--------------------------------------------------------------------------------
+v1.0 of 04 Aug 2002  - Original version.
+        17 Nov 2009  - MOVED TO SVN.
+
+--------------------------------------------------------------------------------
+Src/UVerInfoData.pas
+--------------------------------------------------------------------------------
+v1.0 of 04 Aug 2002  - Original version.
+v1.1 of 22 Jun 2003  - Now ensures that root nodes are named 'VS_VERSION_INFO'.
+        17 Nov 2009  - MOVED TO SVN.
+
+--------------------------------------------------------------------------------
+Src/UVerInfoRec.pas
+--------------------------------------------------------------------------------
+v1.0 of 04 Aug 2002  - Original version.
+v1.1 of 31 May 2003  - Modified input method to be able to read wide string
+                       values without using value length from version info since
+                       this can't be relied upon to be consistent.
+                     - Set DataType to 0 in ANSI ReadHeader method (this was
+                       missing).
+v1.2 of 17 Aug 2003  - Modified input method to correct stream position to deal
+                       with version info that has incorrect structure and
+                       invalid wValueLength value. The main changes were:
+                       - to explicitly set stream position to start of child
+                         records rather than assume correct number of value
+                         bytes are read.
+                       - to explicitly set stream position to end of record (per
+                         wLength value in header) rather than relying on correct
+                         number of bytes to be read.
+        17 Nov 2009  - MOVED TO SVN.
+
+--------------------------------------------------------------------------------
+Src/VIBinData.dpr
+--------------------------------------------------------------------------------
+v1.0 of 02 Aug 2002  - Original version.
+v1.1 of 23 Aug 2007  - Changed path to IntfBinaryVerInfo.pas. Now located in
+                       Exports sub folder - this file is required by any
+                       application that uses VIBinData.dll.
+        17 Nov 2009  - MOVED TO SVN.
+
+--------------------------------------------------------------------------------
+Src/VVIBinData.vi
+--------------------------------------------------------------------------------
+v1.0 of 04 Aug 2002  - Original version.
+v1.1 of 31 May 2003  - Changed references to PJSoft to DelphiDabbler
+                     - Updated file and product version numbers.
+v1.2 of 22 Jun 2003  - Updated file and product version numbers.
+v1.3 of 17 Aug 2003  - Updated file and product version numbers.
+v1.4 of 19 Oct 2004  - Updated file and product version numbers.
+v1.5 of 26 Aug 2007  - Changed Comments string to describe conditions of
+                       distribution and how to obtain source code.
+                     - Added MPL and build instructions.
+                     - Removed path to BRCC32.
+                     - Updated file and product numbers.
+                     - Removed resource identifier.
+        17 Nov 2009  - MOVED TO SVN.
+
+--------------------------------------------------------------------------------
+Src/Exports/IntfBinaryVerInfo.pas
+--------------------------------------------------------------------------------
+v1.0 of 04 Aug 2002  - Original version located in Src directory. Moved to
+                       Src/Exports directory on 23 Aug 2007 without changing
+                       version number.
+        17 Nov 2009  - MOVED TO SVN.
+
+--------------------------------------------------------------------------------
+
+
+================================================================================
+RELEASES
+================================================================================
+
+This section lists all releases of vilib from v1.0.0 to v1.0.5. For each release
+the following information is noted:
+
+  + Version and build number.
+  + List of new, modified and deleted source files.
+
+The Development tools, Delphi-maintained files, test files and documentation are
+not included in this information.
+
+--------------------------------------------------------------------------------
+v1.0.0 of 04 Aug 2002
+--------------------------------------------------------------------------------
+New     : VIBinData.dpr v1.0
+New     : IntfBinaryVerInfo.pas v1.0
+New     : UBinaryVerInfo.pas v1.0
+New     : UVerInfoBinIO.pas v1.0
+New     : UVerInfoData.pas v1.0
+New     : UVerInfoRec.pas v1.0
+New     : VVIBinData.vi v1.0
+
+--------------------------------------------------------------------------------
+v1.0.1 of 31 May 2003
+--------------------------------------------------------------------------------
+Updated : UVerInfoRec.pas v1.1
+Updated : VVIBinData.vi v1.1
+
+--------------------------------------------------------------------------------
+v1.0.2 of 22 Jun 2003
+--------------------------------------------------------------------------------
+Updated : UBinaryVerInfo.pas v1.1
+Updated : UVerInfoData.pas v1.1
+Updated : VVIBinData.vi v1.2
+
+--------------------------------------------------------------------------------
+v1.0.3 of 17 Aug 2003
+--------------------------------------------------------------------------------
+Updated : UVerInfoRec.pas v1.2
+Updated : VVIBinData.vi v1.3
+
+--------------------------------------------------------------------------------
+v1.0.4 of 19 Oct 2004
+--------------------------------------------------------------------------------
+Updated : UBinaryVerInfo.pas v1.2
+Updated : VVIBinData.vi v1.4
+
+--------------------------------------------------------------------------------
+v1.0.5 of 26 Aug 2007
+--------------------------------------------------------------------------------
+Moved   : IntfBinaryVerInfo.pas v1.0 (Src directory => Src/Exports)
+Updated : VIBinData.dpr v1.1
+Updated : VViBinData.vi v1.5
+--------------------------------------------------------------------------------

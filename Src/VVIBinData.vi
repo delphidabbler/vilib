@@ -1,42 +1,21 @@
-;===============================================================================
-;VFileVerCmd.vi
+; This Source Code Form is subject to the terms of the Mozilla Public License,
+; v. 2.0. If a copy of the MPL was not distributed with this file, You can
+; obtain one at https://mozilla.org/MPL/2.0/
 ;
-;Version information description file used to create VVIBinData.res resource
-;file. Build this file with DelphiDabbler Version Information Editor from
-;http://www.delphidabbler.com/. Compile the resulting .rc file using the Borland
-;BRCC32 resource compiler.
+; Copyright (C) 2002-2022, Peter Johnson (https://gravatar.com/delphidabbler).
 ;
-;===============================================================================
-;
-;***** BEGIN LICENSE BLOCK *****
-;
-;Version: MPL 1.1
-;
-;The contents of this file are subject to the Mozilla Public License Version
-;1.1 (the "License"); you may not use this file except in compliance with the
-;License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
-;
-;Software distributed under the License is distributed on an "AS IS" basis,
-;WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
-;the specific language governing rights and limitations under the License.
-;
-;The Original Code is VVIBinData.vi.
-;
-;The Initial Developer of the Original Code is Peter Johnson
-;(http://www.delphidabbler.com/).
-;
-;Portions created by the Initial Developer are Copyright (C) 2002-2007 Peter
-;Johnson. All Rights Reserved.
-;
-;Contributor(s): None
-;
-;***** END LICENSE BLOCK *****
-;
-;===============================================================================
-;
+; Version information description file used to create the VVIBinData.res
+; resource file. Build this file with DelphiDabbler Version Information Editor
+; from https://delphidabbler.com/software/vied. Compile the resulting .rc file
+; using the Embarcadero BRCC32 resource compiler.
+
+
+[Macros]
+Import:version=../VERSION
+
 [Fixed File Info]
-File Version #=1, 0, 5, 6
-Product Version #=1, 0, 5, 0
+File Version #=<%version.release>.<%version.build>
+Product Version #=<%version.release>
 File OS=4
 File Type=2
 File Sub-Type=0
@@ -48,20 +27,21 @@ Language=2057
 Character Set=1252
 
 [String File Info]
-Comments=This is an open source library. It may be distributed under the terms of an end user license agreement available from http://www.delphidabbler.com/. The source code of portions of the library is available from http://www.delphidabbler.com/ under the Mozilla Public License (http://www.mozilla.org/MPL/). Modified versions of the library must be plainly marked as such and must retain all copyright statements.
+Comments=This is an open source library. It may be distributed under the terms of an end user license agreement available from https://delphidabbler.com/. The source code of portions of the library is available from https://delphidabbler.com/ under the Mozilla Public License v2.0 (https://mozilla.org/MPL/2.0/). Modified versions of the library must be plainly marked as such and must retain all copyright statements.
 Company Name=DelphiDabbler
 File Description=DLL that enables binary version information data to be read from and written to streams and to be updated.
 File Version=<#F1>.<#F2>.<#F3> build <#F4>
 Internal Name=<SHORTFNAME>
-Legal Copyright=Copyright © P D Johnson, 2002-<YEAR>
+Legal Copyright=Copyright (c) P D Johnson, 2002-<YEAR>
 Legal Trademark=
 Original File Name=VIBinData.dll
 Private Build=
 Product Name=DelphiDabbler Binary Version Information Data Library.
 Product Version=Release <#P1>.<#P2>.<#P3><SPECIALBUILD>
 Special Build=
+
 [Configuration Details]
 Identifier=
 NumRCComments=0
 ResOutputDir=
-
+FileVersion=1

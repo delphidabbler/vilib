@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{BC5000D7-1521-4BCE-A278-035D1634344E}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="ResRWDemo\ResRWDemo.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="VIReaderDemo\VIReaderDemo.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="ResRWDemo">
+        <MSBuild Projects="ResRWDemo\ResRWDemo.dproj"/>
+    </Target>
+    <Target Name="ResRWDemo:Clean">
+        <MSBuild Projects="ResRWDemo\ResRWDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ResRWDemo:Make">
+        <MSBuild Projects="ResRWDemo\ResRWDemo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="VIReaderDemo">
+        <MSBuild Projects="VIReaderDemo\VIReaderDemo.dproj"/>
+    </Target>
+    <Target Name="VIReaderDemo:Clean">
+        <MSBuild Projects="VIReaderDemo\VIReaderDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="VIReaderDemo:Make">
+        <MSBuild Projects="VIReaderDemo\VIReaderDemo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="ResRWDemo;VIReaderDemo"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="ResRWDemo:Clean;VIReaderDemo:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="ResRWDemo:Make;VIReaderDemo:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
