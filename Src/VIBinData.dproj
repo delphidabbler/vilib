@@ -57,10 +57,9 @@ $(PreBuildEvent)]]></PreBuildEvent>
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="UBinaryVerInfo.pas"/>
-        <DCCReference Include="UVerInfoData.pas"/>
-        <DCCReference Include="UVerInfoRec.pas"/>
-        <DCCReference Include="UVerInfoBinIO.pas"/>
         <DCCReference Include="Exports\IntfBinaryVerInfo.pas"/>
+        <DCCReference Include="Vendor\DelphiDabbler.Lib.VIBin.Resource.pas"/>
+        <DCCReference Include="Vendor\DelphiDabbler.Lib.VIBin.VarRec.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
