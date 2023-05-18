@@ -14,10 +14,9 @@ library VIBinData;
 uses
   ComObj,
   UBinaryVerInfo in 'UBinaryVerInfo.pas',
-  UVerInfoData in 'UVerInfoData.pas',
-  UVerInfoRec in 'UVerInfoRec.pas',
-  UVerInfoBinIO in 'UVerInfoBinIO.pas',
-  IntfBinaryVerInfo in 'Exports\IntfBinaryVerInfo.pas';
+  IntfBinaryVerInfo in 'Exports\IntfBinaryVerInfo.pas',
+  DelphiDabbler.Lib.VIBin.Resource in 'Vendor\DelphiDabbler.Lib.VIBin.Resource.pas',
+  DelphiDabbler.Lib.VIBin.VarRec in 'Vendor\DelphiDabbler.Lib.VIBin.VarRec.pas';
 
 exports
   // Routine exported from DLL that is used to create required objects

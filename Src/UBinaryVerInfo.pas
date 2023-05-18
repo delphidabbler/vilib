@@ -31,7 +31,7 @@ uses
   // Delphi
   SysUtils, Windows, ActiveX,
   // Project
-  UVerInfoData;
+  DelphiDabbler.Lib.VIBin.Resource;
 
 type
 
@@ -49,7 +49,7 @@ type
     IVerInfoBinaryReader, IVerInfoBinaryReader2,
     IVerInfoBinary, IVerInfoBinary2)
   private
-    fVIData: TVerInfoData;
+    fVIData: TVIBinResource;
       {Version information data object used to access and manipulate the binary
       data}
     fLastError: WideString;
@@ -209,7 +209,7 @@ type
       {Returns error message generated from last operation, or '' if last
       operation was a success}
   public
-    constructor Create(VerResType: TVerResType);
+    constructor Create(VerResType: TVIBinResourceType);
       {Class constructor: creates a new version information data object that
       interprets and updates version information data}
     destructor Destroy; override;
@@ -368,12 +368,12 @@ begin
   end;
 end;
 
-constructor TVerInfoBinary.Create(VerResType: TVerResType);
+constructor TVerInfoBinary.Create(VerResType: TVIBinResourceType);
   {Class constructor: creates a new version information data object that
   interprets and updates version information data}
 begin
   inherited Create;
-  fVIData := TVerInfoData.Create(VerResType);
+  fVIData := TVIBinResource.Create(VerResType);
 end;
 
 function TVerInfoBinary.DeleteString(const TableIdx,
