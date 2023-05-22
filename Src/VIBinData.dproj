@@ -31,7 +31,6 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
         <DCC_UsePackage>Vcl40;Vclx40;VclSmp40;Qrpt40;Vcldb40;vcldbx40;ibevnt40;nmfast40;FlatStyle;RichEdit98;HTAComponents;HTACompTest;$(DCC_UsePackage)</DCC_UsePackage>
-        <DCC_WriteableConstants>true</DCC_WriteableConstants>
         <DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
         <DCC_ImageBase>00400000</DCC_ImageBase>
         <DCC_ExeOutput>..\_build\Exe</DCC_ExeOutput>
@@ -71,6 +70,7 @@ $(PreBuildEvent)]]></PreBuildEvent>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName)</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>(None)</Manifest_File>
+        <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
