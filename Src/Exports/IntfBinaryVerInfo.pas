@@ -19,21 +19,6 @@ uses
   Windows, ActiveX;
 
 
-const
-  // Class IDs for various objects supported by this DLL
-
-  // ANSI binary version information
-  // read only object: supports IVerInfoBinaryReader
-  CLSID_VerInfoBinaryReaderA: TGUID = '{E63A68E0-A79D-11D6-852C-000244328976}';
-  // read/write object: supports IVerInfoBinary
-  CLSID_VerInfoBinaryA: TGUID = '{E63A68E1-A79D-11D6-852C-000244328976}';
-
-  // Unicode binary version information
-  // read only object: supports IVerInfoBinaryReader
-  CLSID_VerInfoBinaryReaderW: TGUID = '{E63A68E2-A79D-11D6-852C-000244328976}';
-  // read/write object: supports IVerInfoBinary
-  CLSID_VerInfoBinaryW: TGUID = '{E63A68E3-A79D-11D6-852C-000244328976}';
-
 type
 
   {
@@ -280,14 +265,12 @@ type
       table with the given TableIdx, or -1 if no such string exists}
   end;
 
-  {
-  TVerInfoBinaryCreateFunc:
-    Function prototype for CreateInstance function that is used to create
-    instances of objects supported by this DLL.
-  }
-  TVerInfoBinaryCreateFunc = function(const IID: TGUID;
-    out Obj): HResult; stdcall;
-
+  ///  <summary>Prototype for <c>CreateInstance2</c> function that is used to
+  ///  create an instance of the object supported by this DLL.</summary>
+  ///  <param name="Obj">Typeless [out] Receives the required object. Pass in a
+  ///  variable of any of the supported interface types.</param>
+  ///  <returns><c>HResult</c> Success or failure code.</returns>
+  TVerInfoBinaryCreateFunc = function(out Obj): HResult; stdcall;
 
 implementation
 

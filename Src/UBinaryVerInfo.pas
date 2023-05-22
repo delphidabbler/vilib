@@ -5,37 +5,33 @@
  *
  * Copyright (C) 2002-2022, Peter Johnson (https://gravatar.com/delphidabbler).
  *
- * Class implementing of IVerInfoBinary and IVerInfoBinaryReader interfaces that
- * are exported from the DLL. Also defines a function used to create objects
- * that are supported by the DLL.
+ * Class implementing the various interfaces exported from the DLL. Also defines
+ * a function used to create an object that supports the interfaces.
 }
 
 unit UBinaryVerInfo;
 
 interface
 
-uses
-  // Project
-  IntfBinaryVerInfo;
-
-function CreateInstance(const CLSID: TGUID; out Obj): HResult; stdcall;
-  {If the library supports the object CLSID then an instance of the required
-  object is created. A reference to the object is stored in Obj and S_OK is
-  returned. If the library does not support CLSID then Obj is set to nil and
-  E_NOTIMPL is returned. If there is an error in creating the object Obj is set
-  to nil and E_FAIL is returned}
+///  <summary>Creates an object that supports all the interfaces implemented in
+///  the DLL.</summary>
+///  <param name="Obj">Typeless [out] Receives the required object. Pass in a
+///  variable of any of the supported interface types.</param>
+///  <returns><c>HResult</c> Success or failure code. <c>S_OK</c> on success or
+///  <c>E_FAIL</c> on error.</returns>
+function CreateInstance(out Obj): HResult; stdcall;
 
 implementation
 
 uses
   // Delphi
   SysUtils, Windows, ActiveX,
+  // vilib
+  DelphiDabbler.Lib.VIBin.Resource,
   // Project
-  DelphiDabbler.Lib.VIBin.Resource;
+  IntfBinaryVerInfo;
 
 type
-
-  TVerInfoBinary = class;
 
   {
   TVerInfoBinary:
@@ -209,7 +205,7 @@ type
       {Returns error message generated from last operation, or '' if last
       operation was a success}
   public
-    constructor Create(VerResType: TVIBinResourceType);
+    constructor Create;
       {Class constructor: creates a new version information data object that
       interprets and updates version information data}
     destructor Destroy; override;
@@ -229,39 +225,12 @@ type
       2: (Orig: TVSFixedFileInfo);          // standard record
   end;
 
-function CreateInstance(const CLSID: TGUID; out Obj): HResult; stdcall;
-  {If the library supports the object CLSID then an instance of the required
-  object is created. A reference to the object is stored in Obj and S_OK is
-  returned. If the library does not support CLSID then Obj is set to nil and
-  E_NOTIMPL is returned. If there is an error in creating the object Obj is set
-  to nil and E_FAIL is returned}
+function CreateInstance(out Obj): HResult; stdcall;
 begin
   try
     // Assume success
     Result := S_OK;
-    // Check for supported objects, creating objects of required type
-    if IsEqualIID(CLSID, CLSID_VerInfoBinaryA) then
-      // requested IVerInfoBinary for 16 bit version info data
-      IVerInfoBinary(Obj) := TVerInfoBinary.Create(vrtAnsi)
-        as IVerInfoBinary
-    else if IsEqualIID(CLSID, CLSID_VerInfoBinaryW) then
-      // requested IVerInfoBinary for 32 bit version info data
-      IVerInfoBinary(Obj) := TVerInfoBinary.Create(vrtUnicode)
-        as IVerInfoBinary
-    else if IsEqualIID(CLSID, CLSID_VerInfoBinaryReaderA) then
-      // requested IVerInfoBinaryReader for 16 bit version info data
-      IVerInfoBinaryReader(Obj) := TVerInfoBinary.Create(vrtAnsi)
-        as IVerInfoBinaryReader
-    else if IsEqualIID(CLSID, CLSID_VerInfoBinaryReaderW) then
-      // requested IVerInfoBinaryReader for 32 bit version info data
-      IVerInfoBinaryReader(Obj) := TVerInfoBinary.Create(vrtUnicode)
-        as IVerInfoBinaryReader
-    else
-    begin
-      // Unsupported object: set object nil and set error code
-      Pointer(Obj) := nil;
-      Result := E_NOTIMPL;
-    end;
+    IVerInfoBinary2(Obj) := TVerInfoBinary.Create as IVerInfoBinary2;
   except
     // Something went wrong: set object to nil and set error code
     Pointer(Obj) := nil;
@@ -368,12 +337,12 @@ begin
   end;
 end;
 
-constructor TVerInfoBinary.Create(VerResType: TVIBinResourceType);
+constructor TVerInfoBinary.Create;
   {Class constructor: creates a new version information data object that
   interprets and updates version information data}
 begin
   inherited Create;
-  fVIData := TVIBinResource.Create(VerResType);
+  fVIData := TVIBinResource.Create(vrtUnicode);
 end;
 
 function TVerInfoBinary.DeleteString(const TableIdx,
