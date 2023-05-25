@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2002-2022, Peter Johnson (https://gravatar.com/delphidabbler).
+ * Copyright (C) 2002-2023, Peter Johnson (https://gravatar.com/delphidabbler).
  *
  * Provides interfaces for binary version information reader and writer objects
  * exported from the DLL along with all the supporting types required and a
@@ -21,12 +21,10 @@ uses
 
 type
 
-  {
-  TFixedFileInfoOffset:
-    Enumeration used as index into fixed file information when accessed as an
-    array. Each item in the enumeration accesses a different DWORD element of
-    fixed file information
-  }
+  ///  <summary>Enumeration of values that can be used as an index into a fixed
+  ///  information structure when accessed as an array. Each item in the
+  ///  enumeration accesses a different <c>DWORD</c> element of fixed file
+  ///  information</summary>
   TFixedFileInfoOffset = (
     foSignature,          // accesses the FFI structure's signature element
     foStrucVersion,       // accesses the FFI strusture's version number
@@ -43,226 +41,414 @@ type
     foFileDateLS          // accesses the LS DWORD of the file date
   );
 
-  {
-  TFixedFileInfoArray:
-    This array is the same size as the TVSVersionInfo structure and enables
-    fixed file info to be accessed as an array of values indexed by the
-    TFixedFileInfoOffset enumeration.
-  }
+  ///  <summary>An array occupying the same number of bytes as a
+  ///  <c>TVSVersionInfo</c> record that permits each field to be accessed by
+  ///  a member of the <c>TFixedFileInfoOffset</c> enumeration.</c>
   TFixedFileInfoArray = packed array[TFixedFileInfoOffset] of DWORD;
 
-  {
-  TTranslationCode:
-    Permits access to a translation code either by its DWORD value or by its
-    language ID and character set values.
-  }
+  ///  <summary>Variant record that provides access to a translation code either
+  ///  by its <c>DWORD</c> value or split into the encoded langauge ID and
+  ///  character set (or code page) values.</summary>
   TTranslationCode = packed record
     case Integer of
       0: (LanguageID: Word; CharSet: Word);
       1: (Code: DWORD);
   end;
 
-  {
-  IVerInfoBinaryReader:
-    Interface that enables read only access to binray version information data.
-
-    Inheritance: IVerInfoBinaryReader -> [IUnknown]
-  }
+  ///  <summary>Interface supported by objects that enable read only access to
+  ///  binary version information data with the exception that the data can be
+  ///  cleared, assigned to and read from a stream.</summary>
   IVerInfoBinaryReader = interface(IUnknown)
     ['{6CFEA4E2-FEC4-4828-80F5-7C9285666783}']
-    // Fixed file info
+
+    //-  Fixed file info
+
+    ///  <summary>Fetches the version information's fixed file information
+    ///  record.</summary>
+    ///  <param name="Value">[out] Set to the fixed file version information
+    ///  record.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function GetFixedFileInfo(out Value: TVSFixedFileInfo): HResult; stdcall;
-      {Fetches the version information's fixed file information record and
-      passes it out in Value}
+
+    ///  <summary>Fetches the version information's fixed file information
+    ///  record, interpreted as an array</summary>
+    ///  <param name="Value">[out] Set to the array containing fixed file
+    ///  information.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function GetFixedFileInfoArray(out Value: TFixedFileInfoArray): HResult;
       stdcall;
-      {Fetches the version information's fixed file information record
-      interpreted as an array and passes it out in Value}
+
+    ///  <summary>Fetches an element from the version information fixed file
+    ///  information, when the fixed file information is interpreted as an
+    ///  array.</summary>
+    ///  <param name="Offset">[in] Offset (i.e. index) of the required element
+    ///  in the array.</param>
+    ///  <param name="Value">[out] Set to the value of the required array
+    ///  element.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function GetFixedFileInfoItem(const Offset: TFixedFileInfoOffset;
       out Value: DWORD): HResult; stdcall;
-      {Fetches the given element from the version information's fixed file
-      information and passes in out in Value}
-    // Variable file info
+
+    //-  Variable file info
+
+    ///  <summary>Gets the number of translations in the version information.
+    ///  </summary>
+    ///  <param name="Count">[out] Set to the number of translations.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function GetTranslationCount(out Count: Integer): HResult; stdcall;
-      {Sets Count to the number of translations in the version information}
+
+    ///  <summary>Gets the translation code of a specified translation.
+    ///  </summary>
+    ///  <param name="Index">[in] Index of translation in translation table.
+    ///  </param>
+    ///  <param name="Value">[out] Set to the required translation code.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function GetTranslation(const Index: Integer;
       out Value: TTranslationCode): HResult; stdcall;
-      {Sets Value to the code of the translation at the given index. It is an
-      error if the translation index is out of bounds}
+
+    ///  <summary>Gets the translation string of a specified translation.
+    ///  </summary>
+    ///  <param name="Index">[in] Index of translation in translation table/
+    ///  </param>
+    ///  <param name="Value">[out] Set to the required translation string.
+    ///  </param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
+    ///  <remarks>A translation string is an eight digit hex representation of
+    ///  a translation code.</remarks>
     function GetTranslationAsString(const Index: Integer;
       out Value: WideString): HResult; stdcall;
-      {Sets Value to the translation string of the translation at the given
-      index. It is an error if the translation index is out of bounds}
+
+    ///  <summary>Finds the index of a specified translation in the translation
+    ///  table.</summary>
+    ///  <param name="Value">[in] Translation code of the translation to be
+    ///  found.</param>
+    ///  <param name="Index">[out] Set to the ndex of the translation or -1 if
+    ///  the translation doesn't exist in the translation table.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
+    ///  <remarks>If there is more than one translation with the same code then
+    ///  the index of the first one found will be returned.</remarks>
     function IndexOfTranslation(const Value: TTranslationCode;
       out Index: Integer): HResult; stdcall;
-      {Sets Index to the index of the translation with the given code in the
-      version info, or -1 if there is no such translation}
-    // String tables
+
+    //-  String tables
+
+    ///  <summary>Gets the number of string tables in the version information.
+    ///  </summary>
+    ///  <param name="Count">[out] Set to the number of string tables.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function GetStringTableCount(out Count: Integer): HResult; stdcall;
-      {Return the number of string tables in the version information in Count}
+
+    ///  <summary>Gets the translation string of a specified string table.
+    ///  </summary>
+    ///  <param name="Index">[in] Index of the string table.</param>
+    ///  <param name="TransStr">[out] Set to the required translation string.
+    ///  </param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function GetStringTableTransString(const Index: Integer;
       out TransStr: WideString): HResult; stdcall;
-      {Sets TransCode to the translation string associated with the string table
-      at the given index. It is an error if the table index is out of bounds}
+
+    ///  <summary>Gets the translation code associated with a specified string
+    ///  table.</summary>
+    ///  <param name="Index">[in] Index of the string table.</param>
+    ///  <param name="TransCode">[out] Set to the required translation code.
+    ///  </param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function GetStringTableTransCode(const Index: Integer;
       out TransCode: TTranslationCode): HResult; stdcall;
-      {Returns the translation code associated with the string table at the
-      given index in TransCode. It is an error if the table index is out of
-      bounds}
+
+    ///  <summary>Finds the index of the string table in the version information
+    ///  from its translation string.</summary>
+    ///  <param name="TransStr">[in] Translation string of the string table.
+    ///  </param>
+    ///  <param name="Index">[out] Set to the index of the required string table
+    ///  or -1 if there is no such string table.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
+    ///  <remarks>If there is more than one string table with the same
+    ///  translation string then the index of the first one found will be
+    ///  returned.</remarks>
     function IndexOfStringTable(const TransStr: WideString;
       out Index: Integer): HResult; stdcall;
-      {Sets Index to the index of the the string table identified by the the
-      given translation string, or -1 if no such string table}
+
+    ///  <summary>Finds the index of the string table in the version information
+    ///  from its translation code.</summary>
+    ///  <param name="Code">[in] Translation code of the string table.</param>
+    ///  <param name="Index">[out] Set to the index of the required string table
+    ///  or -1 if there is no such string table.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
+    ///  <remarks>If there is more than one string table with the same
+    ///  translation code then the index of the first one found will be
+    ///  returned.</remarks>
     function IndexOfStringTableByCode(const Code: TTranslationCode;
       out Index: Integer): HResult; stdcall;
-      {Sets Index to the index of the string table identified by a translation
-      string made up from the given translation code, or -1 if no such string
-      table}
-    // String information
+
+    //-  String information
+
+    ///  <summary>Gets the number of string items in a specified string table.
+    ///  </summary>
+    ///  <param name="TableIdx">[in] Index of the string table.</param>
+    ///  <param name="Count">[out] Set to the number of string items in the
+    ///  string table.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function GetStringCount(const TableIdx: Integer;
       out Count: Integer): HResult; stdcall;
-      {Returns the number of string items in the given string table in Count. It
-      is an error if the string table index is out of bounds}
+
+    ///  <summary>Gets the name of a specified string item in a specified string
+    ///  table.</summary>
+    ///  <param name="TableIdx">[in] Index of the string table.</param>
+    ///  <param name="StringIdx">[in] Index of the string item in the string
+    ///  table.</param>
+    ///  <param name="Name">[out] Set to the required name.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function GetStringName(const TableIdx, StringIdx: Integer;
       out Name: WideString): HResult; stdcall;
-      {Returns the name of the string item at the given index in the string
-      table with the given string table index in Name. It is an error if either
-      index is out of bounds}
+
+    ///  <summary>Gets the value of a specified string item in a specified
+    ///  string table.</summary>
+    ///  <param name="TableIdx">[in] Index of the string table.</param>
+    ///  <param name="StringIdx">[in] Index of the string item in the string
+    ///  table.</param>
+    ///  <param name="Value">[out] Set to the required value.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function GetStringValue(const TableIdx, StringIdx: Integer;
       out Value: WideString): HResult; stdcall;
-      {Sets Value to the string item at the given index in the string table. It
-      is an error if either index is out of bounds}
+
+    ///  <summary>Gets the value of a named string item in a specified string
+    ///  table.</summary>
+    ///  <param name="TableIdx">[in] Index of the string table.</param>
+    ///  <param name="Name">[in] Name of the string item in the string table.
+    ///  </param>
+    ///  <param name="Value">[out] Set to the required value.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function GetStringValueByName(const TableIdx: Integer;
       const Name: WideString; out Value: WideString): HResult; stdcall;
-      {Sets Value to the string item with the given name in the string table
-      with the given string table index in Value. It is an error if there is no
-      string item with the given name in the table or if the table index is out
-      of bounds}
-    // General
+
+    //-  General
+
+    ///  <summary>Clears the version information data and restores it to a
+    ///  valid default state.</summary>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
+    ///  <remarks>The default state is a version information object containing
+    ///  an empty fixed file information record, an empty string table list and
+    ///  an empty translation table.</remarks>
     function Clear: HResult; stdcall;
-      {Clears the version information data}
+
+    ///  <summary>Assigns the content of another version information object to
+    ///  this object, overwriting any existing version information data.
+    ///  </summary>
+    ///  <param name="Source">[in] Version information object to be assigned to
+    ///  this object.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function Assign(const Source: IVerInfoBinaryReader): HResult; stdcall;
-      {Assigns contents of given object to this object}
+
+    ///  <summary>Reads the binary version information from a stream,
+    ///  overwriting any existing version information data stored in the object.
+    ///  </summary>
+    ///  <param name="Stm">[in] Stream containing the required data.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function ReadFromStream(const Stm: IStream): HResult; stdcall;
-      {Reads binary version information from given stream}
+
+    ///  <summary>Gets a message describing any error generated by the previous
+    ///  operation on this object.</summary>
+    ///  <returns><c>WideString</c>. The error message or '' if the previous
+    ///  operation was a success.</returns>
     function LastErrorMsg: WideString; stdcall;
-      {Returns error message generated from last operation, or '' if last
-      operation was a success}
+
   end;
 
-  {
-  IVerInfoBinaryReader2:
-    Extension of IVerInfoBinaryReader tthat ads new IndexOfString method.
-
-    Inheritance: IVerInfoBinaryReader2 -> IVerInfoBinaryReader -> [IUnknown]
-  }
+  ///  <summary>Extension of <c>IVerInfoBinaryReader</c> that adds a new method.
+  ///  </summary>
   IVerInfoBinaryReader2 = interface(IVerInfoBinaryReader)
     ['{D94AC867-16FE-45CA-92AA-A1B690EF38D5}']
+
+    ///  <summary>Finds the index of a named string item in a specified string
+    ///  table.</summary>
+    ///  <param name="TableIdx">[in] Index of the string table.</param>
+    ///  <param name="Name">[in] Name of the string item.</param>
+    ///  <param name="Index">[out] Set to the index of the required string item
+    ///  or -1 if there is no such item.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
+    ///  <remarks>If there is more than one string item with the same name then
+    ///  the index of the first one found will be returned.</remarks>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function IndexOfString(TableIdx: Integer; const Name: WideString;
       out Index: Integer): HResult; stdcall;
-      {Sets Index to the index of the string with the given name in the string
-      table with the given TableIdx, or -1 if no such string exists}
+
   end;
 
-  {
-  IVerInfoBinary:
-    Interface that enables access to and modification of binary version
-    information data. It supports all the methods of IVerInfoBinaryReader plus
-    other methods that modify and write out binary version information.
-
-    Inheritance: IVerInfoBinary -> IVerInfoBinaryReader -> [IUnknown]
-  }
+  ///  <summary>Interface supported by object that enable access to and
+  ///  modification of binary version information data. It supports all the
+  ///  methods of <c>IVerInfoBinaryReader</c> plus other methods that modify and
+  ///  write out binary version information.</summary>
   IVerInfoBinary = interface(IVerInfoBinaryReader)
     ['{2E6F3972-BDA1-4E61-AC87-22BCB0FB80BD}']
-    // Additional fixed file info methods
+
+    //-  Additional fixed file info methods
+
+    ///  <summary>Sets the version information's fixed file information record.
+    ///  </summary>
+    ///  <param name="Value">[in] Fixed file information record to be set.
+    ///  </param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function SetFixedFileInfo(const Value: TVSFixedFileInfo): HResult; stdcall;
-      {Sets fixed file information record in version information to given value}
+
+    ///  <summary>Sets the version information's fixed file information record
+    ///  to the data contained in an array of values.</summary>
+    ///  <param name="Value">[in] Array containing data to be set.</param>
     function SetFixedFileInfoArray(const Value: TFixedFileInfoArray): HResult;
       stdcall;
-      {Sets fixed file information in version information to information
-      contained in given array}
+
+    ///  <summary>Sets an element of the version information's fixed file
+    ///  information, when viewed as an array.</summary>
+    ///  <param name="Offset">[in] Offset (i.e. index) of element of array to
+    ///  be set.</param>
+    ///  <param name="Value">[in] Value of array element to be set.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function SetFixedFileInfoItem(const Offset: TFixedFileInfoOffset;
       const Value: DWORD): HResult; stdcall;
-      {Sets the given element of fixed file info to the given value}
-    // Additional variable file info methods
+
+    //-  Additional variable file info methods
+
+    ///  <summary>Sets a translation code of a specified translation.</summary>
+    ///  <param name="Index">[in] Index of translation in translation table/
+    ///  </param>
+    ///  <param name="Value">[in] Translation code to be set.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function SetTranslation(const Index: Integer;
       const Value: TTranslationCode): HResult; stdcall;
-      {Sets the translation at the given index to the given code. It is an error
-      if the translation index is out of bounds}
+
+    ///  <summary>Adds a new translation to the translation table.</summary>
+    ///  <param name="Value">[in] Translation code of the new translation.
+    ///  </param>
+    ///  <param name="NewIndex">[out] Set to the index of the new translation in
+    ///  the translation table.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function AddTranslation(const Value: TTranslationCode;
       out NewIndex: Integer): HResult; stdcall;
-      {Adds a new translation identified by the given code. NewIndex is set to
-      the index of the new translation or -1 on error}
+
+    ///  <summary>Deletes a specified translation from the translation table.
+    ///  </summary>
+    ///  <param name="Index">[in] Index of the translation to be deleted from
+    ///  the translation table.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function DeleteTranslation(const Index: Integer): HResult; stdcall;
-      {Deletes the translation at the given index. It is an error of the
-      translation index is out of bounds}
-    // Additional string table methods
+
+    //-  Additional string table methods
+
+    ///  <summary>Adds a new string table with a given translation string to
+    ///  the version information.</summary>
+    ///  <param name="TransStr">[in] Translation string that identifies the
+    ///  string table.</param>
+    ///  <param name="NewIndex">[out] Set to the index of the new string table,
+    ///  or -1 if an error occurs.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function AddStringTable(const TransStr: WideString;
       out NewIndex: Integer): HResult; stdcall;
-      {Adds a new string table indentified by the given translation string.
-      NewIndex is set to the index of the new string table or -1 if an error
-      occurs}
+
+    ///  <summary>Adds a new string table with a given translation code to
+    ///  the version information.</summary>
+    ///  <param name="Code">[in] Translation code that identifies the string
+    ///  table.</param>
+    ///  <param name="NewIndex">[out] Set to the index of the new string table,
+    ///  or -1 if an error occurs.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function AddStringTableByCode(const TransCode: TTranslationCode;
       out NewIndex: Integer): HResult; stdcall;
-      {Adds a new string table indentified by the given translation code.
-      NewIndex is set to the index of the new string table or -1 if an error
-      occurs}
+
+    ///  <summary>Deletes a specified string table from the version information.
+    ///  </summary>
+    ///  <param name="Index">[in] Index of the string table to be deleted.
+    ///  </param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function DeleteStringTable(const Index: Integer): HResult; stdcall;
-      {Deletes the string table at the given index and all the string items that
-      belong to the table. It is an error if the string table index is out of
-      bounds}
-    // Additional string information methods
+
+    //-  Additional string information methods
+
+    ///  <summary>Sets the value of a specified string item in a specified
+    ///  string table.</summary>
+    ///  <param name="TableIdx">[in] Index of the string table.</param>
+    ///  <param name="StringIdx">[in] Index of the string item in the string
+    ///  table.</param>
+    ///  <param name="Value">[in] Value of string item to be set.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function SetString(const TableIdx, StringIdx: Integer;
       const Value: WideString): HResult; stdcall;
-      {Sets the string value at the given index in the string table at the given
-      table index. It is an error if either index is out of bounds}
+
+    ///  <summary>Sets the value of a named string item in a specified string
+    ///  table.</summary>
+    ///  <param name="TableIdx">[in] Index of the string table.</param>
+    ///  <param name="Name">[in] Name of the string item in the string table.
+    ///  </param>
+    ///  <param name="Value">[in] Value of string item to be set.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function SetStringByName(const TableIdx: Integer;
       const Name, Value: WideString): HResult; stdcall;
-      {Sets the value of the string with the given name in the the string table
-      with the given index. It is an error if the string table index is out of
-      range or if a string with the given name does not exist}
+
+    ///  <summary>Adds a new string item to a specified string table.</summary>
+    ///  <param name="TableIdx">[in] Index of the string table.</param>
+    ///  <param name="Name">[in] Name of the new string item.</param>
+    ///  <param name="Value">[in] Value of the new string item.</param>
+    ///  <param name="StrIdx">[out] Set to the index of the new string item in
+    ///  the string table.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function AddString(const TableIdx: Integer;
       const Name, Value: WideString; out StrIdx: Integer): HResult; stdcall;
-      {Adds a new string with given name and value to the string table with the
-      given index. StrIdx is set to the the index of the new string within the
-      string table or -1 on error. It is an error if the string table index is
-      out of bounds or if the table already contains a string with the given
-      name}
+
+    ///  <summary>Sets the value of a named string information item in a
+    ///  specified string table, adding a new item if one doesn't already exist
+    ///  with that name.</summary>
+    ///  <param name="TableIdx">[in] Index of the string table.</param>
+    ///  <param name="Name">[in] Name of the string item.</param>
+    ///  <param name="Value">[in] Value of the string item.</param>
+    ///  <param name="StrIdx">[out] Set to the index of the updated or added
+    ///  string item in the string table.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function SetOrAddString(const TableIdx: Integer;
       const Name, Value: WideString; out StrIndex: Integer): HResult; stdcall;
-      {Set the string information item with the given name in the string table
-      with the given index to the given value. If a string info item with the
-      given name aleady exists then its value is overwritten, otherwise name
-      item with the required name and value is created. StrIndex is set to the
-      index of the string info item that is updated. It is an error if the
-      string table index is out of bounds}
+
+    ///  <summary>Deletes a specified string item from a specified string table.
+    ///  </summary>
+    ///  <param name="TableIdx">[in] Index of the string table.</param>
+    ///  <param name="StringIdx">[in] Index of the string item to be deleted in
+    ///  the string table.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function DeleteString(const TableIdx, StringIdx: Integer): HResult; stdcall;
-      {Deletes the string information item at the given index in the string
-      table which has the given table index. It is an error if either index is
-      out of bounds}
+
+    ///  <summary>Deletes a named string item from a specified string table.
+    ///  </summary>
+    ///  <param name="TableIdx">[in] Index of the string table.</param>
+    ///  <param name="Name">[in] Name of the string item to be deleted.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function DeleteStringByName(const TableIdx: Integer;
       const Name: WideString): HResult; stdcall;
-      {Deletes the string information item with the given name from the string
-      table which has the given table index. It is an error if no string item
-      with the given name exists in the string table or the string table index
-      is out of bounds}
-    // Additional general methods
+
+    //-  Additional general methods
+
+    ///  <summary>Writes the binary version information from the object to a
+    ///  stream.</summary>
+    ///  <param name="Stm">[in] Stream to receive the data.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function WriteToStream(const Stm: IStream): HResult; stdcall;
-      {Writes the binary version information to the given stream}
+
   end;
 
-  {
-  IVerInfoBinary2:
-    Extension of IVerInfoBinary tthat ads new IndexOfString method.
-
-    Inheritance: IVerInfoBinary2 -> IVerInfoBinary -> [IUnknown]
-  }
+  ///  <summary>Extension of <c>IVerInfoBinary</c> that adds a new method.
+  ///  </summary>
   IVerInfoBinary2 = interface(IVerInfoBinary)
     ['{0068F5D1-7338-494C-8226-0A3A1081F513}']
+
+    ///  <summary>Finds the index of a named string item in a specified string
+    ///  table.</summary>
+    ///  <param name="TableIdx">[in] Index of the string table.</param>
+    ///  <param name="Name">[in] Name of the string item.</param>
+    ///  <param name="Index">[out] Set to the index of the required string item
+    ///  or -1 if there is no such item.</param>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
+    ///  <remarks>If there is more than one string item with the same name then
+    ///  the index of the first one found will be returned.</remarks>
+    ///  <returns><c>S_OK</c> on success or <c>E_FAIL</c> on error.</returns>
     function IndexOfString(TableIdx: Integer; const Name: WideString;
       out Index: Integer): HResult; stdcall;
-      {Sets Index to the index of the string with the given name in the string
-      table with the given TableIdx, or -1 if no such string exists}
+
   end;
 
   ///  <summary>Prototype for <c>CreateInstance2</c> function that is used to
