@@ -369,9 +369,7 @@ begin
   if not Assigned(fCreateFunc) then
     raise Exception.Create('Can''t load "CreateInstance" function from DLL');
   // now create required 32 bit R/W object
-  // -- this same call to CreateInstance (via fCreateFunc) can be for objects
-  //    that support IVerInfoBinary or, as in this case, IVerInfoBinary2.
-  if Failed(fCreateFunc(CLSID_VerInfoBinaryW, fVI)) then
+  if Failed(fCreateFunc(fVI)) then
     raise Exception.Create('Can''t instantiate required object in DLL');
 
   fLog := TLogger.Create(memoView, 32);

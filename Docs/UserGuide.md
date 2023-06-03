@@ -6,7 +6,7 @@
 * [Introduction](#introduction)
 * [Accessing the DLL's Functionality](#accessing-the-dlls-functionality)
     * [Loading the DLL & _CreateInstance_](#loading-the-dll--createinstance)
-    * [Deciding Which CLSID To Use](#deciding-which-clsid-to-use)
+    * [Checking if a file can be read by the DLL](#checking-if-a-file-can-be-read-by-the-dll)
 * [Using the Objects](#using-the-objects)
     * [Return Values & Calling Conventions](#return-values--calling-conventions)
     * [_IVerInfoBinaryReader_ / _IVerInfoBinaryReader2_ Methods](#iverinfobinaryreader--iverinfobinaryreader2-methods)
@@ -17,7 +17,7 @@
 
 ## Introduction
 
-The library enables you to read raw binary version information data that has been extracted from either an executable file or a DLL or from an `RT_VERSION` resource in a 32 bit binary resource file. The library can be used to create, update and write out binary version information data suitable for including in a 32 bit binary resource file.
+The library enables you to read raw binary version information data that has been extracted from either a 32 or 64 bit Windows executable file or a DLL or from an `RT_VERSION` resource in a 32 bit binary resource file. The library can be used to create, update and write out binary version information data suitable for inclusion in a 32 bit binary resource file.
 
 > **NOTE:** The library reads and writes correctly formatted version information. However you are responsible for extracting raw version information from executables and for extracting data from, and inserting data into, binary resource files. Details of how to do this, along with example Delphi Pascal source code is provided in the [Accessing Binary Version Information](#accessing-binary-version-information) section below.
 
@@ -27,34 +27,24 @@ The library is provided in a 32 bit Windows DLL named `VIBinData.dll`. It is rec
 
 ## Accessing the DLL's Functionality
 
-Access to all the DLL's functionality is via interfaces to objects that are exposed by the DLL. These objects are created by passing an appropriate CLSID to the  _CreateInstance_ function, which is the only function exported by the DLL.
+Access to all the DLL's functionality is via interfaces to an object that is exposed by the DLL. The object is created by calling the _CreateInstance_ function, which is the only function exported by the DLL.
 
 _CreateInstance_ is exported by name as:
 
 ~~~pascal
-function CreateInstance(const CLSID: TGUID; out Obj): HResult; stdcall;
+function CreateInstance(out Obj): HResult; stdcall;
 ~~~
 
-The CLSID identifying the desired object is provided as the first parameter and the associated object is passed out in the _Obj_ parameter. You must supply an interface variable of the correct type as the _Obj_ parameter. _S_OK_ is returned on success, _E_NOTIMPL_ is returned if the requested object does not exist and _E_FAIL_ is returned for any other error.
+You must pass a variable of the any of the supported interface types as the _Obj_ parameter. If all goes well then an object implementing the interface it is created and stored in _Obj_ and _S_OK_ is returned. If there is any other error then _Obj_ is set to **nil** and _E_FAIL_ is returned.  The supported interfaces are:
 
-All further interaction with the DLL is done using the supplied object via the methods of its supported interface(s).
+| Interface | Descriptions |
+|:----------|:-------------|
+| _IVerInfoBinaryReader_ & _IVerInfoBinaryReader2_ | Provide read only access to 32 bit binary version information. |
+| _IVerInfoBinary_, _IVerInfoBinary2_ | Provide read/write access to 32 bit binary version information. |
 
-The supported CLSIDs and the interfaces they support are listed below. When passing one of the CLSIDs to _CreateInstance_ a variable of any of the supported interface types can be provided as the _Obj_ parameter.
+The interfaces and their methods are discussed in detail [below](#using-the-objects).
 
-| CLSID | Supports | Description |
-|-------|----------|-------------|
-| `CLSID_VerInfoBinaryReaderW` | _IVerInfoBinaryReader_ & _IVerInfoBinaryReader2_ | Provides read only access to version information stored in Unicode format. |
-| `CLSID_VerInfoBinaryW` | _IVerInfoBinary_, _IVerInfoBinary2_, _IVerInfoBinaryReader_ & _IVerInfoBinaryReader2_ | Provides read/write access to version information stored in Unicode format. |
-| `CLSID_VerInfoBinaryReaderA` | _IVerInfoBinaryReader_ & _IVerInfoBinaryReader2_ | Provides read only access to version information stored in ANSI format.|
-| `CLSID_VerInfoBinaryA` | _IVerInfoBinary_, _IVerInfoBinary2_, _IVerInfoBinaryReader_ & _IVerInfoBinaryReader2_ | Provides read/write access to version information stored in ANSI format. |
-
-Note that _IVerInfoBinaryReader_ & _IVerInfoBinaryReader2_ provide read only access to version information that has been read into the DLL's version information object while _IVerInfoBinary_ & _IVerInfoBinary2_ provide read/write access to the object, permitting version information to be created and modified.
-
-_IVerInfoBinary2_ & _IVerInfoBinaryReader2_ differ from _IVerInfoBinary_ & _IVerInfoBinaryReader_ only in that they both provide an additional method, _IndexOfString_.
-
-See [Deciding Which CLSID To Use](#deciding-which-clsid-to-use) below for a discussion of which object and which interface to use in what circumstances.
-
-> The file `IntfBinaryVerInfo.pas` is provided with the DLL. It is a Delphi Pascal unit that defines all the supported CLSIDs and interfaces, some supporting data types and the type of _CreateInstance_. Delphi users can add this unit to any project that uses the DLL.
+> The file `IntfBinaryVerInfo.pas` is provided with the DLL. It is a Delphi Pascal unit that defines all the supported interfaces, some supporting data types and the type of _CreateInstance_. Delphi users can add this unit to any project that uses the DLL.
 
 ### Loading the DLL & _CreateInstance_
 
@@ -65,14 +55,14 @@ The DLL can either be loaded statically or dynamically.
 If you're sure the DLL will be present at run time you can import _CreateInstance_ statically like this:
 
 ~~~pascal
-function CreateInstance(const IID: TGUID; out Obj): HResult; stdcall;
+function CreateInstance(out Obj): HResult; stdcall;
   external 'VIBinData.dll';
 ~~~
 
 or, if you want to use a different name for the function:
 
 ~~~pascal
-function CreateFunc(const IID: TGUID; out Obj): HResult; stdcall;
+function CreateFunc(out Obj): HResult; stdcall;
   external 'VIBinData.dll' name 'CreateInstance';
 ~~~
 
@@ -80,11 +70,10 @@ _CreateInstance_ can then be used to create the required object as follows:
 
 ~~~pascal
 var
-  VI: IVerInfoBinaryReader; // could be IVerInfoBinaryReader2
+  VI: IVerInfoBinaryReader2; // could be IVerInfoBinaryReader
 begin
-  // Load the required object: can be any of the CLSID_*** constants.
-  // Here we're using the 32 bit read only object.
-  if Failed(CreateInstance(CLSID_VerInfoBinaryReaderW, VI)) then
+  // Load the required object: here we're using the read only object
+  if Failed(CreateInstance(VI)) then
     raise Exception.Create('Can''t instantiate required object');
   // ...
   // Do something with object referenced by VI
@@ -114,9 +103,8 @@ begin
     CreateFunc := GetProcAddress(fDLL, 'CreateInstance');
     if not Assigned(CreateFunc) then
       raise Exception.Create('Can''t load "CreateInstance" function from DLL');
-    // Load the required object: can be any of the CLSID_*** constants.
-    // Here we're using the 32 bit read/write object.
-    if Failed(CreateFunc(CLSID_VerInfoBinaryW, VI)) then
+    // Load the required object here we're using the read/write object
+    if Failed(CreateFunc(VI)) then
       raise Exception.Create('Can''t instantiate required object in DLL');
     // ...
     // Do something with object referenced by VI
@@ -133,17 +121,21 @@ end;
 
 In a real program, you would probably make the variables in the above listing fields of a class, place the code in the try block in the constructor and the code in the finally block in the destructor. Doing that is left as an exercise.
 
-### Deciding Which CLSID To Use
+### Checking if a file can be read by the DLL
 
-Which object you need depends on what you want to do. If you only want to read version information, use one of the "Reader" CLSIDs, for read/write access use one of the other CLSIDs. But how do you know whether you need ANSI or Unicode versions? Here are the rules:
+The DLL can only be used to read and write 32 bit binary version information. The kinds of version information data that can be accessed are:
 
-* Resources from 16 bit programs are always returned in ANSI format regardless of the operating system. This means we must be able to determine whether the executable file being examined is 16 bit (i.e. in NE format).
+_either_
 
-* Resources from 32 & 64 bit programs are returned in ANSI format on Windows 9x operating systems and in Unicode on NT platforms (including Windows 2000 and later). In theory this means we need to be able to detect the OS platform. In practice, these days, it's really unlikely you'll be encountering a Win 9x OS.
+* Data contained in resources of 32 & 64 bit programs when read from a program running on a Windows NT operating system (i.e. Windows NT, 2000, XP, 7 and later), 
 
-* 32 bit binary resource files are always in Unicode format.
+_or_
 
-First, just in case you can't safely assume a Windows NT based OS, you can check with the following function:
+* All 32 bit binary Windows resource files.
+
+> Note that only 32 bit Unicode format binary version information data is supported. ANSI format data cannot be processed. If you need to work with ANSI format data please use a v1.x release.
+
+In the unlikely event that you can't safely assume a Windows NT based OS, you can check with the following function:
 
 ~~~pascal
 uses
@@ -161,15 +153,15 @@ Detecting the type of an executable file is more complicated. However there's a 
 function ExeType(const FileName: string): TExeType;
 ~~~
 
-You pass the full path to the file being examined and get back value from an enumerated type that describes the type of file. If the file is 16 bit the return type is one of _etExe16_ or _etDLL16_. 32 and 64 bit programs return either _etExe32_, _etExe64_, _etDLL32_ or _etDLL64_. Other return types are possible, but they're beyond the scope of this guide.
+You pass the full path to the file being examined and get back value from an enumerated type that describes the type of file. If you have a 32 or 64 bit executable then you will get back a value in the set `[etExe32, etExe64, etDLL32, etDLL64]`.
 
-You can test for a 32 bit binary resource file by checking if the first eight bytes in the file are
+You can test for a 32 bit binary resource file by checking if the first eight bytes in the file are:
 
 ~~~text
 $00 $00 $00 $00 $20 $00 $00 $00
 ~~~
 
-Once you have decided which CLSID to use you can pass it to _CreateInstance_ as described in [Loading the DLL & CreateInstance](#loading-the-dll--createinstance) above.
+Once you checked that a file is valid you can read it's version information using an object created using _CreateInstance_ as described in [Loading the DLL & CreateInstance](#loading-the-dll--createinstance) above.
 
 This just leaves the problem of how to access version information stored in executable and resource files. We'll come on to that [later](#accessing-binary-version-information), after we've reviewed the methods exposed by the object interfaces.
 
@@ -221,7 +213,7 @@ To get the fixed file information use one of the following methods:
 
 * _GetFixedFileInfo_ - returns the _TVSFixedFileInfo_ structure.
 * _GetFixedFileInfoArray_ - returns an array of fixed file information fields.
-* _GetFixedFileInfoItem_ - returns a given fixed file information fields
+* _GetFixedFileInfoItem_ - returns a specified fixed file information field.
 
 To iterate the supported translations we first need to find the number of translations that exist in the translation table. We find the number of translations by calling:
 
@@ -240,7 +232,7 @@ To find the number of string tables available we can call:
 
 * _GetStringTableCount_ - returns the required count or `0` no string tables exist.
 
-Each string table is identified by an 8 digit hexadecimal key string, with the first 4 digits representing a language ID and the 2nd 4 digits representing a character set. We can find out which translation a string table belongs to by using one of the following methods, which both take the zero based index of the string table in question:
+Each string table is identified by an 8 digit hexadecimal key string, with the first 4 digits representing a language ID and the 2nd 4 digits representing a character set. We can find out which translation a string table belongs to by using one of the following methods, which both take as a parameter the zero based index of the string table in question:
 
 * _GetStringTableTransString_ - returns the 8 digit hexadecimal key string that identifies the string table.
 * _GetStringTableTransCode_ - returns a record containing fields for the string table's language ID and character set represented by the table's hexadecimal key string.
@@ -273,9 +265,11 @@ Finally, there are some miscellaneous methods:
 
 ### _IVerInfoBinary_ / _IVerInfoBinary2_ Methods
 
-_IVerInfoBinary_ descends from _IVerInfoBinaryReader_ while _IVerInfoBinary2_ descends from _IVerInfoBinaryReader2_ so they expose all of the methods of their parent interfaces. Those methods are all described above. In this section we will only discuss the methods that are unique to _IVerInfoBinary_ & _IVerInfoBinary2_, i.e. those that are used to modify version information. All of the following methods are supported by both interfaces,
+_IVerInfoBinary_ descends from _IVerInfoBinaryReader_ while _IVerInfoBinary2_ descends from _IVerInfoBinaryReader2_. The purpose of these interfaces is to enable modification of version information before writing it to, for example, a 32 bit resource file.
 
-The purpose of _IVerInfoBinary_ / _IVerInfoBinary2_ is to be able to modify version information before writing it to, for example, a 32 bit resource file.
+The interfaces expose all of the methods of their parent interfaces, as described above.
+
+In this section we will only discuss the methods that are unique to _IVerInfoBinary_ & _IVerInfoBinary2_, i.e. those that are used to modify version information. All of the following methods are supported by both interfaces.
 
 To update the fixed file information use one of the following methods:
 
@@ -347,10 +341,10 @@ type
      fInfoBufferSize: Integer;
     procedure AllocBuffer(const Size: Integer);
     procedure FreeBuffer;
-public
-  constructor Create(const FileName: string);
-  destructor Destroy; override;
-  function Write(const Buffer; Count: LongInt): LongInt; override;
+  public
+    constructor Create(const FileName: string);
+    destructor Destroy; override;
+    function Write(const Buffer; Count: LongInt): LongInt; override;
 end;
 
 implementation

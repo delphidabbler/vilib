@@ -1,12 +1,24 @@
 # DelphiDabbler Version Information Manipulator Library
 
+## Contents
+
+* [Overview](#overview)
+* [Installation](#installation)
+* [Restrictions](#restrictions)
+* [Documentation & Demos](#documentation--demos)
+* [License & Copyright](#license--copyright)
+* [Redistributing the Library](#redistributing-the-library)
+* [Contributing](#contributing)
+* [Compiling](#compiling)
+* [Updates](#updates)
+
 ## Overview
 
-This library is a Windows DLL that can be used to read and manipulate binary version information from executable and binary resource files. It can also update the version information and write it in a binary format suitable for inclusion in binary resource files.
+This library is a 32 bit Windows DLL that can be used to read and manipulate binary version information from executable and binary resource files. It can also update the version information and write it in a format suitable for inclusion in binary resource files.
 
 The advantage of using this library over the Windows API for reading version information is that the library can cope with badly formed version information that would defeat the API routines. Furthermore, the library can enumerate the contents of string tables and list and access non-standard string table entries. It also works with string tables in multiple languages.
 
-The library's advantage in writing version information resources is that it generates correctly formatted binary date suitable for writing to binary resource files. This removes the need to create `.rc` files and, consequently, the need to use a resource compiler for version information.
+The library's advantage in writing version information resources is that it generates correctly formatted binary data suitable for writing to binary resource files. This removes the need to create `.rc` files and, consequently, the need to use a resource compiler for version information.
 
 The library has a [web page](https://delphidabbler.com/software/vibindata) on delphidabbler.com.
 
@@ -24,15 +36,23 @@ The zip file also contains the following files:
 * `CHANGELOG.md` - records changes in each release.
 * `LICENSE.md` - the library's open source license.
 
+## Restrictions
+
+`VIBinData.dll` is only available as a 32 bit DLL. This makes it incompatible with 64 bit programs.
+
+From v2, the library may only be used to read and manipulate 32 bit, Unicode, version information resource data. Such data occurs in all 32 bit binary Windows resource files and any binary version information data read from 32 or 64 bit programs on Windows NT platform operating systems.
+
+> To work with 16 bit binary resource files and 16 bit or 32 bit programs running on the Window 9x line of operating systems you need v1.x of the library, which can read ANSI formatted version information.
+
 ## Documentation & Demos
 
 For details of how to use the library, along with some example code, please refer to the user guide (`UserGuide.md`).
 
 There are also two demos programs in the `Demos` directory. See `Demos/README.md` for details.
 
-## License and copyright
+## License & Copyright
 
-The library is copyright (C) 2002-2022 Peter D Johnson, <https://gravatar.com/delphidabbler>. See the file `LICENSE.md` for details of the license.
+The library is copyright (C) 2002-2023 Peter D Johnson, <https://gravatar.com/delphidabbler>. See the file `LICENSE.md` for details of the license.
 
 Portions of the library's source code are released under the [Mozilla Public License v2.0](https://mozilla.org/MPL/2.0/).
 
@@ -49,8 +69,6 @@ Providing you comply with the terms and conditions of the end user license agree
 Any redistribrutions must be accompanied by a copy the license.
 
 ## Contributing
-
-> **Note:** I'm planning to drop support for all the legacy 16 bit resources in a future major release. Please bear that in mind if you would like to contribute.
 
 This project uses the [Gitflow](https://nvie.com/posts/a-successful-git-branching-model/) methodology.
 
