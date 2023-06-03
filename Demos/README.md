@@ -40,7 +40,7 @@ To compile and run the demos proceed as follows:
 4. Close `VIBinData`.
 5. Open `VIBinDataDemos.groupproj` from Delphi.
 6. Do a full build of both demo projects (Use the _Project | Build All Projects_ menu item).
-7. Copy `VIBinData.dll` from `Build\Exe`, where it was built, and paste it into both the `Demos\ResRWDemo\Win32\Debug` and `Demos\VIReaderDemo\Win32\Debug` directories.
+7. Copy `VIBinData.dll` from `_build\Exe`, where it was built, and paste it into both the `Demos\ResRWDemo\_build\Win32\Debug` and `Demos\VIReaderDemo\_build\Win32\Debug` directories.
 
 ## Using `ResRWDemo`
 
@@ -244,4 +244,6 @@ That's it!
 
 The image above shows all the version information contained in `PasHiGUI.exe`, from my [_PasHi_ Pascal Highlighter](https://delphidabbler.com/software/pashi) project.
 
-Examine the source code for details of how the version information object is used. Note that this demo obtains a read-only object from `VIBinData.dll` whereas the `ResRWDemo` demo obtains a read/write object.
+Examine the source code for details of how the version information object is used.
+
+Note that this demo obtains a read-only interface to the object exposed by `VIBinData.dll` whereas the `ResRWDemo` demo obtains a read/write interface.
