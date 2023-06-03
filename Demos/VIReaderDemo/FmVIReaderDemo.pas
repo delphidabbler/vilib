@@ -208,7 +208,7 @@ begin
   if not Assigned(fCreateFunc) then
     raise Exception.Create('Can''t load "CreateInstance" function from DLL');
   // now create required 32 bit read only object
-  if Failed(fCreateFunc(CLSID_VerInfoBinaryReaderW, fVI)) then
+  if Failed(fCreateFunc(fVI)) then
     raise Exception.Create('Can''t instantiate required object in DLL');
 
   fLog := TLogger.Create(memoView, 32);
