@@ -2,13 +2,10 @@
 ; v. 2.0. If a copy of the MPL was not distributed with this file, You can
 ; obtain one at https://mozilla.org/MPL/2.0/
 ;
-; Copyright (C) 2002-2022, Peter Johnson (https://gravatar.com/delphidabbler).
+; Copyright (C) 2002-2023, Peter Johnson (https://gravatar.com/delphidabbler).
 ;
 ; Version information description file used to create the VVIBinData.res
-; resource file. Build this file with DelphiDabbler Version Information Editor
-; from https://delphidabbler.com/software/vied. Compile the resulting .rc file
-; using the Embarcadero BRCC32 resource compiler.
-
+; resource file.
 
 [Macros]
 Import:version=../VERSION
@@ -16,32 +13,32 @@ Import:version=../VERSION
 [Fixed File Info]
 File Version #=<%version.release>.<%version.build>
 Product Version #=<%version.release>
+File Sub-Type=0
 File OS=4
 File Type=2
-File Sub-Type=0
-File Flags Mask=63
 File Flags=0
+File Flags Mask=63
 
 [Variable File Info]
-Language=2057
 Character Set=1252
+Language=2057
 
 [String File Info]
-Comments=This is an open source library. It may be distributed under the terms of an end user license agreement available from https://delphidabbler.com/. The source code of portions of the library is available from https://delphidabbler.com/ under the Mozilla Public License v2.0 (https://mozilla.org/MPL/2.0/). Modified versions of the library must be plainly marked as such and must retain all copyright statements.
-Company Name=DelphiDabbler
 File Description=DLL that enables binary version information data to be read from and written to streams and to be updated.
-File Version=<#F1>.<#F2>.<#F3> build <#F4>
-Internal Name=<SHORTFNAME>
+Product Version=Release <#P1>.<#P2>.<#P3><%version.suffix>
+Comments=Released under the terms of the Mozilla Public License v2.0 (https://www.mozilla.org/MPL/2.0/).
 Legal Copyright=Copyright (c) P D Johnson, 2002-<YEAR>
-Legal Trademark=
+Internal Name=<SHORTFNAME>
+Company Name=DelphiDabbler
 Original File Name=VIBinData.dll
 Private Build=
-Product Name=DelphiDabbler Binary Version Information Data Library.
-Product Version=Release <#P1>.<#P2>.<#P3><SPECIALBUILD>
+Product Name=<COMPANYNAME> Binary Version Information Data Library.
 Special Build=
+Legal Trademark=
+File Version=<#F1>.<#F2>.<#F3> build <#F4>
 
 [Configuration Details]
-Identifier=
-NumRCComments=0
 ResOutputDir=
-FileVersion=1
+NumRCComments=0
+Identifier=
+FileVersion=2

@@ -1,9 +1,7 @@
 {
   Part of a demo project for VIBinData.dll.
 
-  Copyright (c) 2022, Peter D Johnson (https://gravatar.com/delphidabbler).
-
-  MIT License: https://delphidabbler.mit-license.org/2022-/
+  MIT License: https://delphidabbler.mit-license.org/2022/
 }
 
 unit ULogger;

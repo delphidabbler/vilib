@@ -30,7 +30,7 @@ To use the library simply extract the file `VIBinData.dll`, copy it to a suitabl
 
 The zip file also contains the following files:
 
-* `IntfBinaryVerInfo.pas` - Delphi Pascal source file that defines the interfaces, class IDs and entry point for `VIBinData.dll`.
+* `IntfBinaryVerInfo.pas` - Delphi Pascal source file that defines the supported interfaces and the type of the DLL's entry point function.
 * `README.md` - this file.
 * `UserGuide.md` - information about how to use the DLL.
 * `CHANGELOG.md` - records changes in each release.
@@ -46,7 +46,7 @@ From v2, the library may only be used to read and manipulate 32 bit, Unicode, ve
 
 ## Documentation & Demos
 
-For details of how to use the library, along with some example code, please refer to the user guide (`UserGuide.md`).
+For details of how to use the library, along with some example code, please refer to the user guide (`Docs/UserGuide.md`).
 
 There are also two demos programs in the `Demos` directory. See `Demos/README.md` for details.
 
@@ -78,7 +78,7 @@ To contribute please fork the [repo](https://github.com/delphidabbler/vilib), cl
 
 Delphi 11 is used for development. Later versions may be able to be used. It is possible, but not tested, that Delphi 10.4 may be suitable.
 
-Open `Src/VIBinData.dproj` to build the DLL or `VIBinDataDemos.groupproj` to build the demos.
+Open `Src/VIBinData.dproj` to build the DLL or `Demos/VIBinDataDemos.groupproj` to build the demos.
 
 ### Prerequisites
 

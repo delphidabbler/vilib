@@ -9,6 +9,19 @@ This change log begins with the first ever release, v1.0.0. Releases are listed 
 
 Version numbering adheres to the principles of [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v2.0.0 of 2023-06-03
+
+* Removed 16 bit support from DLL.
+* Only one object type is now exported from the DLL removing the necessity to specify a CLSID to select the required object.
+* Changed signature of DLL entry point function.
+* Replaced core code with equivalent from the `ddablib/vibin` project. Note that `vibin` was based on the original code from `vilib` that it now replaces.
+* Revise DLL's version information string information text.
+* Updated demo programs to work with revised DLL entry point.
+* Updated documentation.
+  * Revised re changes in v2.
+  * Fixed errors and made clarifications.
+  * XMLDoc comment code.
+
 ## v1.1.0 of 2022-11-20
 
 + Added new _IndexOfString_ method, exposed via new _IVerInfoBinary2_ and _IVerInfoBinaryReader2_ interfaces, that descend from _IVerInfoBinary_ and _IVerInfoBinaryReader_ respectively.
