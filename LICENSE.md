@@ -1,4 +1,4 @@
-# DelphiDabbler Version Information Manipulator Library End Use License Agreement
+# DelphiDabbler Version Information Manipulator Library End User License Agreement
 
 The DelphiDabbler Version Information Manipulator Library (the "Library"), is an open source library. The Library is copyright (C) 2002-2023, [Peter D Johnson](https://gravatar.com/delphidabbler). All rights reserved.
 

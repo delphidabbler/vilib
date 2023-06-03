@@ -7,7 +7,7 @@
 * [Accessing the DLL's Functionality](#accessing-the-dlls-functionality)
     * [Loading the DLL & _CreateInstance_](#loading-the-dll--createinstance)
     * [Checking if a file can be read by the DLL](#checking-if-a-file-can-be-read-by-the-dll)
-* [Using the Objects](#using-the-objects)
+* [Using the Object](#using-the-object)
     * [Return Values & Calling Conventions](#return-values--calling-conventions)
     * [_IVerInfoBinaryReader_ / _IVerInfoBinaryReader2_ Methods](#iverinfobinaryreader--iverinfobinaryreader2-methods)
     * [_IVerInfoBinary_ / _IVerInfoBinary2_ Methods](#iverinfobinary--iverinfobinary2-methods)
@@ -35,14 +35,14 @@ _CreateInstance_ is exported by name as:
 function CreateInstance(out Obj): HResult; stdcall;
 ~~~
 
-You must pass a variable of the any of the supported interface types as the _Obj_ parameter. If all goes well then an object implementing the interface it is created and stored in _Obj_ and _S_OK_ is returned. If there is any other error then _Obj_ is set to **nil** and _E_FAIL_ is returned.  The supported interfaces are:
+You must pass a variable of the any of the supported interface types as the _Obj_ parameter. If all goes well then an object implementing the interface it is created and stored in _Obj_ and _S_OK_ is returned. If there is any error then _Obj_ is set to **nil** and _E_FAIL_ is returned.  The supported interfaces are:
 
 | Interface | Descriptions |
 |:----------|:-------------|
 | _IVerInfoBinaryReader_ & _IVerInfoBinaryReader2_ | Provide read only access to 32 bit binary version information. |
 | _IVerInfoBinary_, _IVerInfoBinary2_ | Provide read/write access to 32 bit binary version information. |
 
-The interfaces and their methods are discussed in detail [below](#using-the-objects).
+The interfaces and their methods are discussed in detail [below](#using-the-object).
 
 > The file `IntfBinaryVerInfo.pas` is provided with the DLL. It is a Delphi Pascal unit that defines all the supported interfaces, some supporting data types and the type of _CreateInstance_. Delphi users can add this unit to any project that uses the DLL.
 
@@ -165,13 +165,13 @@ Once you checked that a file is valid you can read it's version information usin
 
 This just leaves the problem of how to access version information stored in executable and resource files. We'll come on to that [later](#accessing-binary-version-information), after we've reviewed the methods exposed by the object interfaces.
 
-## Using the Objects
+## Using the Object
 
-As you know each object exposes either a read-only _IVerInfoBinaryReader_ / _IVerInfoBinaryReader2_ interface or a _IVerInfoBinary_ / _IVerInfoBinary2_ read/write interface. We will discuss them separately below.
+As already mentioned, the object exposes either a read-only _IVerInfoBinaryReader_ / _IVerInfoBinaryReader2_ interface or a _IVerInfoBinary_ / _IVerInfoBinary2_ read/write interface. We will discuss them separately below.
 
 ### Return Values & Calling Conventions
 
-With the sole exception of _LastErrorMsg_, every method of either interface returns an _HRESULT_ value. Any data returned from the methods is always passed out via an **out** parameter.
+With the sole exception of _LastErrorMsg_, every method returns an _HRESULT_ value. Any data returned from the methods is always passed out via an **out** parameter.
 
 All methods use the **stdcall** calling convention.
 
@@ -189,7 +189,7 @@ begin
 end;
 ~~~
 
-Every call to one of the methods exposed by the library can be wrapped in a call to _Check_. For example, the _GetTranslationCount_ method can be called like this:
+Every call to one of the methods that return _HRESULT_ can be wrapped in a call to _Check_. For example, the _GetTranslationCount_ method can be called like this:
 
 ~~~pascal
 var
@@ -222,7 +222,7 @@ To iterate the supported translations we first need to find the number of transl
 We can find details of each translation using these methods, which both take the zero based index of the required translation as a parameter:
 
 * _GetTranslation_ - returns a record containing the translation's language ID and character set (code page).
-* _GetTranslationAsString_ - returns an eight character hexadecimal string representation of the translation, with the 1st four hex digits being the language ID and the 2nd four digit being the character set.
+* _GetTranslationAsString_ - returns an eight character hexadecimal string representation of the translation, with the 1st four hex digits being the language ID and the 2nd four digits being the character set.
 
 We can also get the index of a specified translation, or check if it exists by calling:
 
@@ -289,12 +289,12 @@ The string table list can be modified using the following methods:
 * _AddStringTableByCode_ - adds a new string table with a key calculated from a given record containing the language ID and character set.
 * _DeleteStringTable_ - deletes the string table at a given index in the table list.
 
-String names within a specified string table can be modified using the following methods. All the methods take a parameter that specifies the index of the string table to be operated on:
+String items within a specified string table can be modified using the following methods. All the methods take a parameter that specifies the index of the string table to be operated on:
 
 * _SetString_ - sets the value of the string at a given index in the string table to a new value.
 * _SetStringByName_ - sets the value of a string with a given name to a new value.
 * _AddString_ - adds a new string with a specified name and value to a string table.
-* _SetOrAddString_ - if a string with a given name is not in the string table then its value is updated, otherwise the string name & value are added to the table.
+* _SetOrAddString_ - if a string with a given name is in the string table then its value is updated, otherwise the string name & value are added to the table.
 * _DeleteString_ - deletes the string at a given index in the string table.
 * _DeleteStringByName_ - deletes the string with a given name from the string table.
 
@@ -305,7 +305,7 @@ Lastly there are the following additional or modified methods:
 
 ## Accessing Binary Version Information
 
-Now you know how to load the DLL, how to create an object and how to choose which object you want. You also know to manipulate version information using the objects exposed by the DLL. But how to you get to the version information embedded in executable files and binary version information?
+Now you know how to load the DLL and how to create a version information object. You also know to manipulate version information using the available methods. But how do you get to the version information embedded in executable files and binary version information?
 
 The techniques for executable and resource files are different and will be dealt with separately.
 
@@ -441,8 +441,8 @@ var
   ExeStream: TVerInfoFileStream;
   VIStream: IStream;
 begin
+  ExeStream := TVerInfoFileStream.Create(ExeFile);
   try
-    ExeStream := TVerInfoFileStream.Create(ExeFile);
     VIStream := TStreamAdapter.Create(ExeStream, soReference);
     if Failed(VI.ReadFromStream(VIStream)) then
       raise Exception.Create('Some error message');
