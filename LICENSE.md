@@ -1,12 +1,12 @@
 # DelphiDabbler Version Information Manipulator Library End Use License Agreement
 
-The DelphiDabbler Version Information Manipulator Library (the "Library"), is an open source library. The Library is copyright (C) 2002-2022, [Peter D Johnson](https://gravatar.com/delphidabbler). All rights reserved.
+The DelphiDabbler Version Information Manipulator Library (the "Library"), is an open source library. The Library is copyright (C) 2002-2023, [Peter D Johnson](https://gravatar.com/delphidabbler). All rights reserved.
 
 ## Source code
 
 The source code of portions of this Library is available from the [delphidabbler/vilib](https://github.com/delphidabbler/vilib) project on GitHub, under the terms of the [Mozilla Public License v2.0](https://mozilla.org/MPL/2.0/).
 
-The demo code is released under the [MIT License](https://delphidabbler.mit-license.org/2022-), with the exception of `Demos/VIReaderDemo/UVerInfoFileStream.pas` and `Demos/ResRWDemo/Vendor/PJResFile.pas` which are licensed under the [Mozilla Public License v2](https://mozilla.org/MPL/2.0/).
+The demo code is released under the [MIT License](https://delphidabbler.mit-license.org/2022/), with the exception of `Demos/VIReaderDemo/UVerInfoFileStream.pas` and `Demos/ResRWDemo/Vendor/PJResFile.pas` which are licensed under the [Mozilla Public License v2](https://mozilla.org/MPL/2.0/).
 
 ## Executable (binary) code
 
@@ -26,7 +26,7 @@ You may distribute the executable version, in original or modified form, with yo
 
    ~~~text
    "VIBinData.dll was written by Peter D Johnson and is copyright (C)
-   2002-2022 Peter D Johnson, https://gravatar.com/delphidabbler. Portions of the
+   2002-2023 Peter D Johnson, https://gravatar.com/delphidabbler. Portions of the
    DLL's source code are available from https://github.com/delphidabbler/vilib
    under the terms of the Mozilla Public License v2.0
    (https://mozilla.org/MPL/2.0/)."
